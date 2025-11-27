@@ -1,0 +1,7 @@
+pocketflow
+pyyaml
+
+# 根据你使用的 LLM 选择其中一个：
+# openai>=1.0.0          # OpenAI
+# anthropic>=0.18.0      # Anthropic Claude
+# google-genai>=0.3.0    # Google Gemini
