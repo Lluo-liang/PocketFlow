@@ -1,0 +1,417 @@
+# SOMS 需求模板填充工作流
+id: soms-template-filler-workflow
+title: "SOMS需求模板填充器"
+version: "1.0"
+description: "产品分析师主导的智能模板填充工作流,从白话文需求到结构化PRD文档"
+
+# 🎭 主导角色配置
+primary_role:
+  role_id: "product_analyst"
+  role_name: "产品分析师"
+  execution_mode: "intelligent_template_filling"
+  authority_level: "TEMPLATE_FILLER"
+
+  # 角色能力集成
+  integrated_capabilities:
+    natural_language_parsing: "白话文需求解析"
+    information_extraction: "多维度信息提取"
+    intelligent_questioning: "智能信息补全提问"
+    template_filling: "结构化模板填充"
+
+  # 自动化执行配置
+  autonomous_execution:
+    auto_parsing: true
+    auto_information_extraction: true
+    auto_template_filling: true
+    user_intervention_points: ["missing_information_questioning", "final_review"]
+
+# 约束驱动配置
+constraint_driven_config:
+  constraint_priority: ["PROHIBIT", "REQUIRE", "ALLOW"]
+
+  # 核心约束规则
+  core_constraints:
+    # 信息提取约束
+    information_extraction:
+      - rule: "REQUIRE_MULTI_DIMENSIONAL_EXTRACTION"
+        description: "强制提取6个维度的信息"
+        enforcement: "mandatory_extraction"
+
+      - rule: "PROHIBIT_KEY_INFORMATION_ASSUMPTION"
+        description: "禁止假设关键信息,必须提问获取"
+        enforcement: "blocking_validation"
+
+    # 提问约束
+    questioning_constraints:
+      - rule: "REQUIRE_COMPLETENESS_CHECK"
+        description: "强制检查信息完整性"
+        enforcement: "pre_filling_validation"
+
+      - rule: "PROHIBIT_EXCESSIVE_QUESTIONING"
+        description: "禁止一次提问超过3个问题"
+        enforcement: "question_count_limit"
+
+      - rule: "REQUIRE_TARGETED_QUESTIONING"
+        description: "强制精准提问关键信息"
+        enforcement: "question_quality_check"
+
+    # 模板填充约束
+    template_filling:
+      - rule: "REQUIRE_ALL_TEMPLATES_FILLING"
+        description: "强制填充所有6个模板文档"
+        enforcement: "completion_validation"
+
+      - rule: "PROHIBIT_TEMPLATE_STRUCTURE_DESTRUCTION"
+        description: "禁止破坏模板结构"
+        enforcement: "structure_preservation"
+
+      - rule: "REQUIRE_FORMAT_COMPLIANCE"
+        description: "强制遵循模板格式"
+        enforcement: "format_validation"
+
+    # 文件操作约束
+    file_operations:
+      - rule: "REQUIRE_FOLDER_EXISTENCE_VALIDATION"
+        description: "强制验证任务文件夹存在"
+        enforcement: "pre_execution_check"
+
+      - rule: "PROHIBIT_TEMPLATE_OVERWRITE_WITHOUT_CONFIRMATION"
+        description: "禁止未经确认覆盖已有内容"
+        enforcement: "user_confirmation_required"
+
+# 工作流阶段定义
+stages:
+  # 阶段1: 输入接收与验证
+  - id: input-reception-and-validation
+    title: "输入接收与验证"
+    description: "接收任务文件夹路径和需求描述,验证文件夹存在"
+    tasks:
+      - id: receive-user-input
+        title: "接收用户输入"
+        description: "接收任务文件夹路径和白话文需求描述"
+        input:
+          - "task_folder_path"
+          - "requirement_description"
+
+      - id: validate-task-folder
+        title: "验证任务文件夹"
+        description: "验证任务文件夹存在且包含6个模板文件"
+        tools: ["Bash", "Read"]
+        validation:
+          - "folder_exists"
+          - "template_files_exist"
+        on_failure:
+          action: "prompt_user_to_copy_template"
+
+      - id: read-template-files
+        title: "读取模板文件"
+        description: "读取6个空白模板文件的内容"
+        tools: ["Read"]
+        resources:
+          - "../../mydocs/tasks/{task}/01-需求背景.md"
+          - "../../mydocs/tasks/{task}/02-功能描述.md"
+          - "../../mydocs/tasks/{task}/03-接口文档.md"
+          - "../../mydocs/tasks/{task}/04-实现方案.md"
+          - "../../mydocs/tasks/{task}/05-技术细节.md"
+          - "../../mydocs/tasks/{task}/06-注意事项.md"
+
+  # 阶段2: 白话文需求解析
+  - id: natural-language-parsing
+    title: "白话文需求解析"
+    description: "从用户的白话文中提取关键信息"
+    dependencies: ["input-reception-and-validation"]
+    tasks:
+      - id: extract-requirement-background
+        title: "提取需求背景信息"
+        description: "提取PLM任务号、需求来源、业务背景、目标、相关方"
+        extraction_targets:
+          - "plm_number"
+          - "requirement_source"
+          - "business_background"
+          - "objectives"
+          - "stakeholders"
+
+      - id: extract-function-description
+        title: "提取功能描述信息"
+        description: "提取功能概述、详细说明、业务实体、业务规则、业务流程"
+        extraction_targets:
+          - "function_overview"
+          - "detailed_description"
+          - "business_entities"
+          - "business_rules"
+          - "business_processes"
+
+      - id: extract-api-specification
+        title: "提取接口文档信息"
+        description: "提取接口路径、请求方法、请求参数、响应格式、异常情况"
+        extraction_targets:
+          - "api_path"
+          - "request_method"
+          - "request_parameters"
+          - "response_format"
+          - "error_cases"
+
+      - id: extract-implementation-hints
+        title: "提取实现方案提示"
+        description: "提取涉及模块、DDD分层提示、技术选型提示"
+        extraction_targets:
+          - "involved_modules"
+          - "ddd_layer_hints"
+          - "technology_stack_hints"
+
+      - id: extract-technical-details
+        title: "提取技术细节信息"
+        description: "提取数据库设计、外部服务调用、对象映射提示"
+        extraction_targets:
+          - "database_design_hints"
+          - "external_service_hints"
+          - "object_mapping_hints"
+
+      - id: extract-attention-points
+        title: "提取注意事项信息"
+        description: "提取性能、并发、兼容性、数据一致性考虑"
+        extraction_targets:
+          - "performance_considerations"
+          - "concurrency_safety"
+          - "compatibility"
+          - "data_consistency"
+
+      - id: classify-and-store
+        title: "分类存储信息"
+        description: "将提取的信息分类存储到内部结构"
+        output:
+          type: "structured_information"
+          format: "json"
+
+  # 阶段3: 信息完整性检查
+  - id: information-completeness-check
+    title: "信息完整性检查"
+    description: "检查必需信息是否齐全"
+    dependencies: ["natural-language-parsing"]
+    tasks:
+      - id: validate-required-information
+        title: "验证必需信息"
+        description: "检查关键信息是否齐全"
+        required_fields:
+          - "plm_number"
+          - "function_overview"
+          - "api_path"
+          - "request_parameters"
+          - "response_format"
+          - "business_entities"
+        validation_result:
+          - "complete"
+          - "incomplete_with_missing_fields"
+
+      - id: identify-missing-information
+        title: "识别缺失信息"
+        description: "识别缺失的关键信息"
+        output:
+          type: "missing_information_list"
+          priority_ranking: true
+
+  # 阶段4: 智能信息补全
+  - id: intelligent-information-completion
+    title: "智能信息补全"
+    description: "通过智能提问补全缺失信息"
+    dependencies: ["information-completeness-check"]
+    conditional: "information_incomplete"
+    tasks:
+      - id: generate-questions
+        title: "生成补全问题"
+        description: "基于缺失信息生成精准问题"
+        questioning_strategy:
+          max_questions_per_round: 3
+          prioritize_critical_information: true
+          provide_examples: true
+          use_multiple_choice_when_possible: true
+
+      - id: ask-user-questions
+        title: "向用户提问"
+        description: "使用AskUserQuestion工具向用户提问"
+        tools: ["AskUserQuestion"]
+        user_interaction: true
+        blocking: true
+
+      - id: update-information-structure
+        title: "更新信息结构"
+        description: "根据用户回答更新内部信息结构"
+        output:
+          type: "updated_structured_information"
+
+      - id: re-check-completeness
+        title: "重新检查完整性"
+        description: "检查信息是否已完整,如未完整则继续提问"
+        loop_control:
+          max_iterations: 5
+          exit_condition: "all_required_information_complete"
+
+  # 阶段5: 模板文档填充
+  - id: template-document-filling
+    title: "模板文档填充"
+    description: "将提取和补全的信息填充到6个PRD模板文档"
+    dependencies: ["intelligent-information-completion"]
+    tasks:
+      - id: fill-requirement-background
+        title: "填充01-需求背景.md"
+        description: "填充PLM任务号、需求来源、业务背景、目标、相关方"
+        tools: ["Edit"]
+        target: "../../mydocs/tasks/{task}/01-需求背景.md"
+        content_mapping:
+          plm_number: "## PLM任务号"
+          requirement_source: "## 需求来源"
+          business_background: "## 业务背景"
+          objectives: "## 目标"
+          stakeholders: "## 相关方"
+
+      - id: fill-function-description
+        title: "填充02-功能描述.md"
+        description: "填充功能概述、详细说明、业务实体、业务规则、业务流程"
+        tools: ["Edit"]
+        target: "../../mydocs/tasks/{task}/02-功能描述.md"
+        content_mapping:
+          function_overview: "## 功能概述"
+          detailed_description: "## 详细说明"
+          business_entities: "## 业务实体"
+          business_rules: "## 业务规则"
+          business_processes: "## 业务流程"
+
+      - id: fill-api-specification
+        title: "填充03-接口文档.md"
+        description: "填充基本信息、请求参数、响应格式、异常情况、调用示例"
+        tools: ["Edit"]
+        target: "../../mydocs/tasks/{task}/03-接口文档.md"
+        content_mapping:
+          api_path: "## 基本信息 - 接口路径"
+          request_method: "## 基本信息 - 请求方法"
+          request_parameters: "## 请求参数"
+          response_format: "## 响应格式"
+          error_cases: "## 异常情况"
+        formatting:
+          parameters_as_table: true
+          response_as_table: true
+          generate_example: true
+
+      - id: fill-implementation-plan
+        title: "填充04-实现方案.md"
+        description: "填充技术可行性分析、DDD分层设计、实现步骤、技术选型"
+        tools: ["Edit"]
+        target: "../../mydocs/tasks/{task}/04-实现方案.md"
+        content_generation:
+          infer_ddd_layers: true
+          generate_implementation_steps: true
+          suggest_technology_stack: true
+          search_reference_implementations: false
+
+      - id: fill-technical-details
+        title: "填充05-技术细节.md"
+        description: "填充外部接口调用、数据库设计、对象映射、事务处理、异常处理"
+        tools: ["Edit"]
+        target: "../../mydocs/tasks/{task}/05-技术细节.md"
+        content_generation:
+          infer_database_design: true
+          infer_external_services: true
+          infer_object_mapping: true
+          infer_transaction_handling: true
+          infer_exception_handling: true
+
+      - id: fill-attention-points
+        title: "填充06-注意事项.md"
+        description: "填充性能考虑、并发安全、兼容性、数据一致性等"
+        tools: ["Edit"]
+        target: "../../mydocs/tasks/{task}/06-注意事项.md"
+        content_mapping:
+          performance_considerations: "## 性能考虑"
+          concurrency_safety: "## 并发安全"
+          compatibility: "## 兼容性"
+          data_consistency: "## 数据一致性"
+
+  # 阶段6: 完成总结
+  - id: completion-summary
+    title: "完成总结"
+    description: "展示填充结果和下一步建议"
+    dependencies: ["template-document-filling"]
+    tasks:
+      - id: display-filled-files
+        title: "展示已填充的文件"
+        description: "列出已填充的6个文档"
+        output:
+          - "01-需求背景.md"
+          - "02-功能描述.md"
+          - "03-接口文档.md"
+          - "04-实现方案.md"
+          - "05-技术细节.md"
+          - "06-注意事项.md"
+
+      - id: display-key-information
+        title: "展示关键信息概览"
+        description: "总结填充的关键信息"
+        summary_items:
+          - "PLM任务号"
+          - "功能概述"
+          - "接口路径"
+          - "涉及的业务实体"
+
+      - id: highlight-manual-review-needed
+        title: "提示需要人工检查的部分"
+        description: "标记可能需要人工补充或修改的部分"
+        review_areas:
+          - "推断的DDD分层设计"
+          - "推断的数据库设计"
+          - "推断的技术细节"
+
+      - id: provide-next-steps
+        title: "提供后续步骤建议"
+        description: "建议用户下一步操作"
+        next_steps:
+          - "检查生成的文档,补充或修改不准确的部分"
+          - "手动添加遗漏的业务规则或技术细节"
+          - "使用 soms-requirement-analysis Skill 进行深度需求分析"
+          - "使用 soms-code-implementation-v2 Skill 实现代码"
+
+# 质量门禁
+quality_gates:
+  - gate_id: "task_folder_validation_gate"
+    stage: "input-reception-and-validation"
+    criteria:
+      - "任务文件夹存在"
+      - "6个模板文件存在"
+    enforcement: "BLOCKING"
+
+  - gate_id: "information_completeness_gate"
+    stage: "information-completeness-check"
+    criteria:
+      - "必需信息齐全"
+    enforcement: "WARNING"
+    action_on_failure: "proceed_to_questioning"
+
+  - gate_id: "all_templates_filled_gate"
+    stage: "template-document-filling"
+    criteria:
+      - "所有6个模板文档已填充"
+    enforcement: "BLOCKING"
+
+# 输出定义
+outputs:
+  primary_output:
+    type: "filled_prd_documents"
+    location: "../../mydocs/tasks/{task}/"
+    files:
+      - "01-需求背景.md"
+      - "02-功能描述.md"
+      - "03-接口文档.md"
+      - "04-实现方案.md"
+      - "05-技术细节.md"
+      - "06-注意事项.md"
+
+  secondary_output:
+    type: "structured_information"
+    format: "json"
+    usage: "internal_state_for_debugging"
+
+# 执行配置
+execution_config:
+  execution_mode: "interactive_with_questioning"
+  user_interaction_mode: "questioning_when_needed"
+  error_handling: "prompt_user_and_retry"
+  logging_level: "INFO"

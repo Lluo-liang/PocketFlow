@@ -1,0 +1,348 @@
+# SOMS 代码实现工作流
+id: soms-code-implementation-workflow
+title: "SOMS代码实现执行器"
+version: "2.0"
+description: "技术负责人主导的代码实现工作流,基于PRD文档按DDD分层生成高质量代码"
+
+# 🎭 主导角色配置
+primary_role:
+  role_id: "tech_lead"
+  role_name: "技术负责人"
+  execution_mode: "autonomous_code_implementation"
+  authority_level: "IMPLEMENTATION_LEAD"
+
+  # 角色能力集成
+  integrated_capabilities:
+    prd_analysis: "PRD文档解析与验证"
+    ddd_code_generation: "DDD分层代码生成"
+    compilation_verification: "逐层编译验证"
+    issue_tracking: "问题记录与跟踪"
+    knowledge_base_feedback: "知识库反馈与更新建议"
+
+  # 自动化执行配置
+  autonomous_execution:
+    auto_prd_reading: true
+    auto_code_generation: true
+    auto_compilation_check: true
+    auto_issue_recording: true
+    user_intervention_points: ["prd_incomplete_confirmation", "knowledge_update_confirmation"]
+
+# 约束驱动配置
+constraint_driven_config:
+  constraint_priority: ["PROHIBIT", "REQUIRE", "ALLOW"]
+
+  # 核心约束规则
+  core_constraints:
+    # PRD依赖约束
+    prd_dependency:
+      - rule: "REQUIRE_PRD_READING"
+        description: "强制读取所有PRD文档"
+        enforcement: "blocking_validation"
+
+      - rule: "PROHIBIT_ASSUMPTION_ON_INCOMPLETE_PRD"
+        description: "禁止在PRD不完整时擅自假设"
+        enforcement: "user_confirmation_or_issue_logging"
+
+    # DDD分层约束
+    ddd_layering:
+      - rule: "REQUIRE_LAYER_SEQUENCE"
+        description: "强制按Domain→Infrastructure→Application→Adapter顺序实现"
+        enforcement: "strict_sequence"
+
+      - rule: "PROHIBIT_LAYER_VIOLATION"
+        description: "禁止违反DDD分层原则"
+        enforcement: "architecture_validation"
+
+    # 编译验证约束
+    compilation:
+      - rule: "REQUIRE_LAYER_COMPILATION"
+        description: "强制每层编译通过才继续"
+        enforcement: "blocking_compilation_check"
+
+      - rule: "PROHIBIT_IGNORE_COMPILATION_ERRORS"
+        description: "禁止忽略编译错误"
+        enforcement: "error_fixing_required"
+
+    # 问题记录约束
+    issue_recording:
+      - rule: "REQUIRE_ISSUE_LOGGING"
+        description: "强制记录所有问题到99-实现问题记录.md"
+        enforcement: "automatic_logging"
+
+    # 知识库约束
+    knowledge_base:
+      - rule: "REQUIRE_KNOWLEDGE_COMPLIANCE"
+        description: "强制遵循PRD引用的知识库规范"
+        enforcement: "code_style_validation"
+
+      - rule: "PROHIBIT_UNAUTHORIZED_KNOWLEDGE_UPDATE"
+        description: "禁止未经用户同意更新知识库"
+        enforcement: "user_confirmation_required"
+
+# 工作流阶段定义
+stages:
+  # 阶段1: PRD文档读取与验证
+  - id: prd-reading-and-validation
+    title: "PRD文档读取与验证"
+    description: "读取PRD文档,验证完整性,读取知识库规范"
+    tasks:
+      - id: receive-task-path
+        title: "接收任务路径"
+        description: "用户提供任务文件夹路径"
+        input: "task_path"
+
+      - id: read-prd-documents
+        title: "读取PRD文档"
+        description: "读取6个PRD文档: 01-需求背景 ~ 06-注意事项"
+        tools: ["Read"]
+        resources:
+          - "../../mydocs/tasks/{task}/01-需求背景.md"
+          - "../../mydocs/tasks/{task}/02-功能描述.md"
+          - "../../mydocs/tasks/{task}/03-接口文档.md"
+          - "../../mydocs/tasks/{task}/04-实现方案.md"
+          - "../../mydocs/tasks/{task}/05-技术细节.md"
+          - "../../mydocs/tasks/{task}/06-注意事项.md"
+
+      - id: validate-prd-completeness
+        title: "验证PRD完整性"
+        description: "检查接口文档、DDD分层设计、技术细节是否齐全"
+        validation:
+          required_sections: ["api_specification", "ddd_design", "technical_details"]
+        on_failure:
+          action: "prompt_user_or_log_issue"
+
+      - id: read-knowledge-base-specs
+        title: "读取知识库规范"
+        description: "根据PRD中引用的知识库文件,读取代码规范"
+        tools: ["Read"]
+        conditional: "prd_references_knowledge"
+
+  # 阶段2: Domain层实现
+  - id: domain-layer-implementation
+    title: "Domain层实现"
+    description: "创建Entity, DomainService, Repository"
+    dependencies: ["prd-reading-and-validation"]
+    tasks:
+      - id: create-entities
+        title: "创建领域实体"
+        description: "根据04-实现方案.md创建Entity类"
+        tools: ["Write"]
+        code_template: "lombok_data_builder"
+
+      - id: create-domain-services
+        title: "创建领域服务"
+        description: "创建DomainService类"
+        tools: ["Write"]
+        code_template: "spring_service_slf4j"
+
+      - id: define-repositories
+        title: "定义仓储接口"
+        description: "定义Repository接口"
+        tools: ["Write"]
+
+      - id: compile-domain-layer
+        title: "编译Domain层"
+        description: "编译soms-service-domain模块"
+        tools: ["Bash"]
+        command: "cd ../../../soms-service-domain && ../mvnw clean compile -q"
+        blocking: true
+        on_failure:
+          action: "fix_and_log_issue"
+
+  # 阶段3: Infrastructure层实现
+  - id: infrastructure-layer-implementation
+    title: "Infrastructure层实现"
+    description: "创建DO, Mapper, RepositoryImpl, Gateway"
+    dependencies: ["domain-layer-implementation"]
+    tasks:
+      - id: create-data-objects
+        title: "创建数据库实体"
+        description: "根据05-技术细节.md创建DO类"
+        tools: ["Write"]
+        code_template: "mybatis_plus_entity"
+
+      - id: create-mappers
+        title: "创建MyBatis Mapper"
+        description: "创建Mapper接口,继承BaseMapper"
+        tools: ["Write"]
+
+      - id: create-mapper-xml
+        title: "创建Mapper XML"
+        description: "如需复杂SQL,创建XML文件"
+        tools: ["Write"]
+        conditional: "complex_sql_required"
+
+      - id: create-repository-impl
+        title: "创建仓储实现"
+        description: "实现Repository接口,包含DO↔Entity转换"
+        tools: ["Write"]
+
+      - id: create-gateways
+        title: "创建外部服务网关"
+        description: "如PRD提到外部服务,创建Gateway"
+        tools: ["Write"]
+        conditional: "external_service_required"
+
+      - id: compile-infrastructure-layer
+        title: "编译Infrastructure层"
+        description: "编译soms-service-infrastructure模块"
+        tools: ["Bash"]
+        command: "cd ../../../soms-service-infrastructure && ../mvnw clean compile -q"
+        blocking: true
+
+  # 阶段4: Application层实现
+  - id: application-layer-implementation
+    title: "Application层实现"
+    description: "创建DTO, AppService"
+    dependencies: ["infrastructure-layer-implementation"]
+    tasks:
+      - id: create-dtos
+        title: "创建DTO"
+        description: "根据03-接口文档.md创建RequestDTO和ResponseDTO"
+        tools: ["Write"]
+        code_template: "validated_dto"
+
+      - id: create-app-services
+        title: "创建应用服务"
+        description: "创建AppService,使用@Transactional"
+        tools: ["Write"]
+        code_template: "transactional_service"
+
+      - id: compile-application-layer
+        title: "编译Application层"
+        description: "编译soms-service-application模块"
+        tools: ["Bash"]
+        command: "cd ../../../soms-service-application && ../mvnw clean compile -q"
+        blocking: true
+
+  # 阶段5: Adapter层实现
+  - id: adapter-layer-implementation
+    title: "Adapter层实现"
+    description: "创建Controller"
+    dependencies: ["application-layer-implementation"]
+    tasks:
+      - id: create-controllers
+        title: "创建Controller"
+        description: "根据03-接口文档.md的API路径创建Controller"
+        tools: ["Write"]
+        code_template: "rest_controller"
+
+      - id: compile-adapter-layer
+        title: "编译Adapter层"
+        description: "编译soms-service-start模块"
+        tools: ["Bash"]
+        command: "cd ../../../soms-service-start && ../mvnw clean compile -q"
+        blocking: true
+
+  # 阶段6: 整体编译验证
+  - id: overall-compilation
+    title: "整体编译验证"
+    description: "整体mvn clean compile"
+    dependencies: ["adapter-layer-implementation"]
+    tasks:
+      - id: compile-overall
+        title: "整体编译"
+        description: "编译整个项目"
+        tools: ["Bash"]
+        command: "cd ../../.. && ./mvnw clean compile -q"
+        blocking: true
+
+  # 阶段7: 问题记录与知识库更新
+  - id: issue-recording-and-knowledge-update
+    title: "问题记录与知识库更新"
+    description: "记录问题,建议更新知识库,交付总结"
+    dependencies: ["overall-compilation"]
+    tasks:
+      - id: update-implementation-issues
+        title: "更新实现问题记录"
+        description: "记录所有问题到99-实现问题记录.md"
+        tools: ["Edit"]
+        target: "../../mydocs/tasks/{task}/99-实现问题记录.md"
+
+      - id: generate-implementation-summary
+        title: "生成实施总结"
+        description: "在99-实现问题记录.md末尾添加总结"
+        tools: ["Edit"]
+
+      - id: ask-knowledge-update-confirmation
+        title: "询问知识库更新确认"
+        description: "如有需要更新知识库的内容,询问用户"
+        user_interaction: true
+        conditional: "knowledge_update_suggested"
+
+      - id: display-delivery-summary
+        title: "展示交付总结"
+        description: "展示文件列表、编译状态、问题记录、知识库更新情况"
+
+# 质量门禁
+quality_gates:
+  - gate_id: "prd_completeness_gate"
+    stage: "prd-reading-and-validation"
+    criteria:
+      - "PRD文档齐全"
+      - "必要信息完整"
+    enforcement: "WARNING"
+
+  - gate_id: "domain_compilation_gate"
+    stage: "domain-layer-implementation"
+    criteria:
+      - "Domain层编译通过"
+    enforcement: "BLOCKING"
+
+  - gate_id: "infrastructure_compilation_gate"
+    stage: "infrastructure-layer-implementation"
+    criteria:
+      - "Infrastructure层编译通过"
+    enforcement: "BLOCKING"
+
+  - gate_id: "application_compilation_gate"
+    stage: "application-layer-implementation"
+    criteria:
+      - "Application层编译通过"
+    enforcement: "BLOCKING"
+
+  - gate_id: "adapter_compilation_gate"
+    stage: "adapter-layer-implementation"
+    criteria:
+      - "Adapter层编译通过"
+    enforcement: "BLOCKING"
+
+  - gate_id: "overall_compilation_gate"
+    stage: "overall-compilation"
+    criteria:
+      - "整体编译通过"
+    enforcement: "BLOCKING"
+
+# 输出定义
+outputs:
+  primary_output:
+    type: "ddd_layered_code"
+    layers:
+      - name: "Domain"
+        path: "../../../soms-service-domain/"
+        files: ["Entity", "DomainService", "Repository"]
+      - name: "Infrastructure"
+        path: "../../../soms-service-infrastructure/"
+        files: ["DO", "Mapper", "RepositoryImpl", "Gateway"]
+      - name: "Application"
+        path: "../../../soms-service-application/"
+        files: ["RequestDTO", "ResponseDTO", "AppService"]
+      - name: "Adapter"
+        path: "../../../soms-service-start/"
+        files: ["Controller"]
+
+  secondary_output:
+    type: "implementation_issues"
+    location: "../../mydocs/tasks/{task}/99-实现问题记录.md"
+
+  tertiary_output:
+    type: "knowledge_base_updates"
+    location: "../../mydocs/knowledge-base/"
+    conditional: true
+
+# 执行配置
+execution_config:
+  execution_mode: "sequential_with_compilation_gates"
+  user_interaction_mode: "confirmation_points"
+  error_handling: "fix_and_log"
+  logging_level: "INFO"

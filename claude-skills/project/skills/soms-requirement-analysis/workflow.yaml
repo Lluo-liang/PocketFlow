@@ -1,0 +1,318 @@
+# SOMS 需求分析与PRD生成工作流
+id: soms-requirement-analysis-workflow
+title: "SOMS需求分析与PRD生成"
+version: "1.0"
+description: "产品技术架构师主导的需求分析工作流,从明确需求到结构化PRD文档生成"
+
+# 🎭 主导角色配置
+primary_role:
+  role_id: "product_architect"
+  role_name: "产品技术架构师"
+  execution_mode: "autonomous_requirement_analysis"
+  authority_level: "REQUIREMENT_ARCHITECT"
+
+  # 角色能力集成
+  integrated_capabilities:
+    requirement_understanding: "需求理解与信息收集"
+    technical_feasibility_analysis: "技术可行性分析"
+    business_rule_identification: "业务规则识别与提取"
+    prd_generation: "PRD文档结构化生成"
+    knowledge_base_maintenance: "知识库智能维护"
+
+  # 自动化执行配置
+  autonomous_execution:
+    auto_analysis: true
+    auto_prd_generation: true
+    auto_knowledge_integration: true
+    user_intervention_points: ["requirement_confirmation", "knowledge_update_confirmation", "final_review"]
+
+# 约束驱动配置
+constraint_driven_config:
+  constraint_priority: ["PROHIBIT", "REQUIRE", "ALLOW"]
+
+  # 核心约束规则
+  core_constraints:
+    # 信息完整性约束
+    information_completeness:
+      - rule: "REQUIRE_REQUIREMENT_CONFIRMATION"
+        description: "强制确认需求理解"
+        enforcement: "mandatory_user_confirmation"
+
+      - rule: "PROHIBIT_INCOMPLETE_INFORMATION"
+        description: "禁止在信息不完整时继续"
+        enforcement: "blocking_validation"
+
+    # 知识库约束
+    knowledge_base_constraints:
+      - rule: "REQUIRE_KNOWLEDGE_SEARCH"
+        description: "强制检索知识库"
+        enforcement: "pre_prd_generation"
+
+      - rule: "PROHIBIT_UNAUTHORIZED_KNOWLEDGE_UPDATE"
+        description: "禁止未经用户同意更新知识库"
+        enforcement: "user_confirmation_required"
+
+      - rule: "REQUIRE_INDEX_UPDATE"
+        description: "强制更新知识库索引"
+        enforcement: "post_knowledge_update"
+
+    # PRD文档约束
+    prd_constraints:
+      - rule: "REQUIRE_COMPLETE_PRD_STRUCTURE"
+        description: "强制生成完整的6+1文档结构"
+        enforcement: "document_structure_validation"
+
+      - rule: "REQUIRE_KNOWLEDGE_REFERENCE"
+        description: "强制在PRD中引用知识库"
+        enforcement: "reference_validation"
+
+# 工作流阶段定义
+stages:
+  # 阶段1: 需求理解与信息收集
+  - id: requirement-understanding
+    title: "需求理解与信息收集"
+    description: "完整理解用户需求,确保信息齐全"
+    tasks:
+      - id: receive-user-input
+        title: "接收用户输入"
+        description: "接收PLM任务号、功能描述、接口文档等信息"
+
+      - id: information-completeness-check
+        title: "信息完整性检查"
+        description: "检查必要信息是否齐全,缺失则询问用户"
+        validation:
+          required_fields: ["plm_number", "function_description", "api_specification"]
+
+      - id: confirm-requirement-understanding
+        title: "确认需求理解"
+        description: "向用户展示需求理解并等待确认"
+        user_interaction: true
+        blocking: true
+
+  # 阶段2: 技术可行性分析
+  - id: technical-feasibility-analysis
+    title: "技术可行性分析"
+    description: "评估需求能否基于现有SOMS架构实现"
+    dependencies: ["requirement-understanding"]
+    tasks:
+      - id: project-structure-scan
+        title: "项目结构扫描"
+        description: "扫描soms-service-domain等模块"
+        tools: ["Bash", "Glob"]
+
+      - id: knowledge-base-search
+        title: "检索知识库"
+        description: "根据关键词检索相关知识库文件"
+        tools: ["Read"]
+        resources:
+          - path: "../../mydocs/knowledge-index.json"
+            usage: "knowledge_retrieval"
+          - path: "../../mydocs/knowledge-base/code-specs/DDD分层架构调用规范.md"
+            usage: "architecture_constraints"
+
+      - id: check-ddd-architecture-design
+        title: "检查DDD架构设计"
+        description: "检查是否遵循DDD分层架构调用规范"
+        validation:
+          - "AppService是否需要调用Service而非Repository"
+          - "Service返回值是否为Model而非PO"
+          - "是否需要新增Service方法"
+          - "是否需要新增Repository方法"
+          - "Mapper命名是否符合规范(XxxAppServiceMapper)"
+        user_feedback_required: true
+
+      - id: check-entity-class-fields
+        title: "检查实体类字段完整性"
+        description: "检查PO类字段是否满足接口文档要求"
+        validation:
+          - "对比接口文档和PO类字段"
+          - "发现缺失字段立即记录"
+        user_feedback_required: true
+        feedback_template: |
+          ### ⚠️ 发现问题: {EntityName} 缺少字段
+
+          根据接口文档分析,`{EntityName}` 缺少以下字段:
+          {missing_fields_list}
+
+          ### 📋 需要用户确认
+
+          1. 这些字段是否存在于数据库表 `{table_name}` 中?
+          2. 如果不存在,是否需要DBA创建?
+          3. 还是这些字段通过关联表获取?
+
+          **请确认后,我将更新PRD的"05-技术细节.md"**
+
+      - id: feasibility-assessment
+        title: "技术可行性评估"
+        description: "评估架构支持度、领域匹配度、技术复杂度"
+        output:
+          - "feasibility_conclusion"
+          - "technical_risks"
+          - "attention_points"
+          - "architecture_constraints_check_result"
+          - "entity_fields_check_result"
+
+  # 阶段3: 业务规则识别与知识库检索
+  - id: business-rule-identification
+    title: "业务规则识别与知识库检索"
+    description: "识别SOMS项目特有的业务规则"
+    dependencies: ["technical-feasibility-analysis"]
+    tasks:
+      - id: identify-business-rule-types
+        title: "识别业务规则类型"
+        description: "识别业务流程规则、约束规则、计算规则"
+
+      - id: check-knowledge-base
+        title: "检查知识库"
+        description: "检查business-rules分类中是否已有相关规则"
+        tools: ["Read"]
+
+      - id: identify-code-specs-and-external-services
+        title: "识别代码规范和外部服务调用"
+        description: "识别DDD规范、异常处理规范、外部服务调用等"
+
+  # 阶段4: PRD文档生成
+  - id: prd-generation
+    title: "PRD文档生成"
+    description: "生成结构化的6个标准PRD文档"
+    dependencies: ["business-rule-identification"]
+    tasks:
+      - id: create-task-folder
+        title: "创建任务文件夹"
+        description: "创建PLM-{编号}-{功能简述}文件夹"
+        tools: ["Bash"]
+        output_path: "../../mydocs/tasks/PLM-{number}-{brief}"
+
+      - id: generate-requirement-background
+        title: "生成01-需求背景.md"
+        description: "填充PLM任务号、需求来源、业务背景、目标"
+        tools: ["Write"]
+
+      - id: generate-function-description
+        title: "生成02-功能描述.md"
+        description: "填充功能概述、详细说明、业务实体、业务规则、业务流程"
+        tools: ["Write"]
+
+      - id: generate-api-specification
+        title: "生成03-接口文档.md"
+        description: "填充基本信息、请求参数、响应格式、异常情况、调用示例"
+        tools: ["Write"]
+
+      - id: generate-implementation-plan
+        title: "生成04-实现方案.md"
+        description: "填充技术可行性分析、DDD分层设计、实现步骤清单、技术选型、参考实现"
+        tools: ["Write", "Bash", "Glob"]
+        tasks:
+          - "auto_infer_ddd_layers"
+          - "search_reference_implementations"
+
+      - id: generate-technical-details
+        title: "生成05-技术细节.md"
+        description: "填充外部接口调用、数据库设计、对象映射、事务处理、异常处理"
+        tools: ["Write"]
+
+      - id: generate-attention-points
+        title: "生成06-注意事项.md"
+        description: "填充性能考虑、并发安全、兼容性、数据一致性等"
+        tools: ["Write"]
+
+      - id: initialize-implementation-issues
+        title: "初始化99-实现问题记录.md"
+        description: "创建空模板,等待Skill 2填充"
+        tools: ["Write"]
+
+  # 阶段5: 知识库更新
+  - id: knowledge-base-update
+    title: "知识库更新"
+    description: "将识别的通用规范更新到知识库"
+    dependencies: ["prd-generation"]
+    tasks:
+      - id: identify-reusable-content
+        title: "识别可复用内容"
+        description: "识别业务规则、外部服务调用示例、代码规范等"
+
+      - id: ask-user-confirmation
+        title: "询问用户确认"
+        description: "对每个可复用内容询问用户是否更新到知识库"
+        user_interaction: true
+
+      - id: update-knowledge-files-and-index
+        title: "更新知识库文件和索引"
+        description: "创建知识库文件,更新knowledge-index.json"
+        tools: ["Write", "Edit"]
+        conditional: "user_confirmed"
+        tasks:
+          - "create_knowledge_file"
+          - "update_index_files"
+          - "update_index_keywords"
+          - "update_index_tags"
+          - "update_usage_statistics"
+
+      - id: notify-user
+        title: "通知用户"
+        description: "知识库更新完成后通知用户"
+
+  # 阶段6: 交付总结
+  - id: delivery-summary
+    title: "交付总结"
+    description: "向用户展示完成情况"
+    dependencies: ["knowledge-base-update"]
+    tasks:
+      - id: display-completion-status
+        title: "展示完成情况"
+        description: "展示任务文件夹路径、生成的文件列表、知识库更新情况"
+
+      - id: provide-next-steps
+        title: "提供后续步骤"
+        description: "指导用户检查PRD并调用Skill 2实现代码"
+        next_skill: "soms-code-implementation-v2"
+
+# 质量门禁
+quality_gates:
+  - gate_id: "information_completeness_gate"
+    stage: "requirement-understanding"
+    criteria:
+      - "必要信息齐全"
+      - "需求理解已确认"
+    enforcement: "BLOCKING"
+
+  - gate_id: "prd_structure_completeness_gate"
+    stage: "prd-generation"
+    criteria:
+      - "6+1文档全部生成"
+      - "PRD引用知识库"
+      - "DDD分层设计完整"
+    enforcement: "BLOCKING"
+
+  - gate_id: "knowledge_update_gate"
+    stage: "knowledge-base-update"
+    criteria:
+      - "知识库文件创建成功"
+      - "索引文件更新成功"
+    enforcement: "WARNING"
+
+# 输出定义
+outputs:
+  primary_output:
+    type: "prd_documents"
+    location: "../../mydocs/tasks/PLM-{number}-{brief}/"
+    files:
+      - "01-需求背景.md"
+      - "02-功能描述.md"
+      - "03-接口文档.md"
+      - "04-实现方案.md"
+      - "05-技术细节.md"
+      - "06-注意事项.md"
+      - "99-实现问题记录.md"
+
+  secondary_output:
+    type: "knowledge_base_updates"
+    location: "../../mydocs/knowledge-base/"
+    conditional: true
+
+# 执行配置
+execution_config:
+  execution_mode: "sequential_with_gates"
+  user_interaction_mode: "confirmation_points"
+  error_handling: "fail_fast_with_rollback"
+  logging_level: "INFO"
