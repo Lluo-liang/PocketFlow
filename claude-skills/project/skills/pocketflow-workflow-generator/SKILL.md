@@ -1,615 +1,353 @@
 ---
 name: pocketflow-workflow-generator
-description: PocketFlow 智能 Skill 生成引擎 - 系统架构师主导的元 Skill 系统。基于自然语言描述，参考Cookbook Skills最佳实践，自动生成符合 Claude Skills 标准的定制化 Skill。支持智能角色选择、知识库集成、项目规范推断、约束驱动保证。适用于快速创建各类研发 Skills。
+description: PocketFlow 轻量级工作流生成器 - 基于自然语言描述和 Cookbook 最佳实践,自动生成 PocketFlow 应用代码。支持智能模式识别、代码结构分析、自动化项目初始化。适用于快速创建 Agent、Workflow、RAG 等 LLM 应用。
 allowed-tools: [Read, Write, Edit, Bash, Task, Glob, Grep]
 ---
 
-# PocketFlow 智能 Skill 生成引擎
+# PocketFlow 轻量级工作流生成器
 
 ## 重要说明
 
-**这是一个元 Skill（Meta-Skill）**：用于生成其他 Claude Skills，而不是生成原始的 YAML 工作流。
+这是一个**轻量级、可迁移**的 PocketFlow 应用生成器,不依赖复杂的外部配置。
 
-生成的 Skill 遵循 PocketFlow Skills 架构：
-- **SKILL.md**: 增强版 Skill 定义（包含详细执行指令）
-- **workflow.yaml**: 完整的工作流定义（作为 Skill 的执行引擎）
+核心理念:
+- **自包含**: 不依赖 `_shared/agents/` 等外部目录
+- **基于示例**: 从 cookbook/ 目录学习最佳实践
+- **智能推断**: 自动识别技术栈和项目结构
+- **即插即用**: 复制到任何 PocketFlow 项目即可使用
 
 ## 触发场景
 
-当用户说以下内容时自动激活：
-- "帮我生成一个 Skill..."
-- "我需要创建XX流程的 Skill..."
-- "为我的项目定制一个 Skill..."
-- "参考Cookbook生成 Skill..."
-- "智能生成适合XX场景的 Skill..."
-- "基于XX工作流创建 Skill..."
+当用户说以下内容时自动激活:
+- "帮我生成一个 PocketFlow 应用..."
+- "创建一个XX功能的智能体/工作流..."
+- "参考 Cookbook 生成代码..."
+- "我需要一个基于 PocketFlow 的XX系统..."
+- "快速搭建一个XX应用..."
 
 ## ⚡ 执行指令（重要）
 
-当此 Skill 被激活时，请严格按照以下步骤执行：
+当此 Skill 被激活时,请严格按照以下步骤执行:
 
-### 第一步：读取完整工作流定义
+### 第一步:理解用户需求
 
-```
-读取当前目录下的 workflow.yaml 文件，该文件包含完整的元工作流定义（3054行）
-文件路径：skills/pocketflow/generators/workflow-generator/workflow.yaml
-```
+**任务**: 从用户描述中提取关键信息
 
-**重要性**: 这是一个**元工作流**（Meta-Workflow），用于生成其他工作流，逻辑非常复杂。
+**提取内容**:
+- 应用类型: Agent/Workflow/RAG/Map-Reduce/Batch 等
+- 核心功能: 用户想要实现的具体功能
+- 输入输出: 数据流向和格式
+- 特殊需求: 异步/批处理/多智能体等
 
-### 第二步：理解元工作流结构
+**输出**: 一份简洁的需求摘要
 
-workflow.yaml 包含以下关键配置：
-- **主导角色**: system_architect（系统架构师）
-- **执行模式**: 自主工作流生成（autonomous_workflow_generation）
-- **核心能力**:
-  - 智能角色选择引擎
-  - Cookbook模式学习
-  - 知识库集成
-  - 项目规范自动推断
-  - 约束驱动保证
+### 第二步:扫描 Cookbook 目录
 
-### 第三步：依赖路径解析
+**任务**: 扫描 `cookbook/` 目录,找到相似的参考示例
 
-**重要**：workflow.yaml 中的所有依赖路径都是相对于**项目根目录**的：
+**执行操作**:
+```bash
+# 列出所有 cookbook 示例
+ls -la /path/to/PocketFlow/cookbook/
 
-| workflow.yaml 中的路径 | 实际文件路径（从项目根目录） |
-|----------------------|--------------------------|
-| `agents/roles/system-architect.yaml` | `agents/roles/system-architect.yaml` |
-| `agents/roles/tech-lead.yaml` | `agents/roles/tech-lead.yaml` |
-| `agents/roles/*.yaml` | `agents/roles/` (所有角色) |
-| `plugins/workflow-domain/` | `plugins/workflow-domain/` |
-| `plugins/quality-domain/` | `plugins/quality-domain/` |
-| `plugins/business-domain/` | `plugins/business-domain/` |
-| `workflows/cookbook/` | `workflows/cookbook/` (参考模式) |
-
-**从 Skill 目录访问这些文件**：
-- 使用 `../../_shared/agents/roles/`
-- 使用 `../../_shared/plugins/`
-- 使用 `../../../workflows/cookbook/` (Cookbook参考)
-
-**特别重要**：此工作流需要**读取整个 cookbook 目录**作为模式参考！
-
-### 第四步：Cookbook Skills 模式学习（关键）
-
-**这是元 Skill 的核心能力**：参考已有的高质量 Skills 作为模式。
-
-#### Skills Cookbook 目录结构
-```
-skills/pocketflow/cookbook/
-├── tdd-pipeline/
-│   ├── SKILL.md (增强版，340行)
-│   └── workflow.yaml (完整工作流定义)
-├── branch-test-generator/
-│   ├── SKILL.md (增强版，417行)
-│   └── workflow.yaml (完整工作流定义)
-└── ... (其他 Skills)
+# 读取相关示例的 README.md 和 main.py
 ```
 
-#### 学习内容（双层结构）
+**匹配策略**:
+- Agent 类型 → 参考 `pocketflow-agent/`
+- Workflow 类型 → 参考 `pocketflow-workflow/`
+- RAG 类型 → 参考 `pocketflow-rag/`
+- Batch 处理 → 参考 `pocketflow-batch/` 或 `pocketflow-batch-node/`
+- 异步处理 → 参考 `pocketflow-async-basic/`
 
-**1. SKILL.md 编写模式**
-- **触发场景设计**: 如何定义自然语言触发条件
-- **执行指令结构**: 8-9步详细执行指令的标准格式
-- **路径解析说明**: 如何说明依赖文件的路径映射
-- **核心特性描述**: 如何展示 Skill 的核心能力
-- **使用示例编写**: 如何提供清晰的使用示例
-- **约束说明方式**: 如何说明 PROHIBIT/REQUIRE/ALLOW
-- **适用场景定义**: 如何明确适用和不适用场景
+**输出**: 1-3个最相关的 cookbook 示例路径
 
-**2. workflow.yaml 结构模式**
-- **角色配置模式**: 主导角色和后台角色的配置
-- **阶段设计模式**: 任务阶段的分解和依赖
-- **约束驱动模式**: 约束优先级和执行控制
-- **质量门禁模式**: 质量标准的设置
-- **依赖管理模式**: plugins 和 agents 的引用
-- **变量定义模式**: 动态变量的定义和使用
+### 第三步:分析参考示例
 
-#### 模式提取步骤
+**任务**: 深入分析参考示例的代码结构
+
+**分析内容**:
+1. **Node 设计模式**: 如何划分节点,每个节点的职责
+2. **Flow 连接方式**: Action 机制的使用
+3. **Shared Store 结构**: 数据如何在节点间传递
+4. **工具函数组织**: utils/ 目录的结构
+5. **错误处理**: 重试和 fallback 的使用
+6. **特殊模式**: Batch/Async/Multi-Agent 的实现方式
+
+**输出**: 设计模式提取文档
+
+### 第四步:设计应用架构
+
+**任务**: 基于需求和参考示例,设计新应用的架构
+
+**设计内容**:
+1. **目录结构**:
 ```
-1. 扫描 skills/pocketflow/cookbook/ 目录
-2. 读取所有已转换的 Skills（SKILL.md + workflow.yaml）
-3. 分析 SKILL.md 的编写模式和结构
-4. 分析 workflow.yaml 的设计模式
-5. 提取可复用的双层架构设计
-6. 应用到新 Skill 生成
-```
-
-**重要**: 现在参考的是 **Skills**，而不是原始的 workflow YAML！
-
-### 第五步：强制约束执行（核心机制）
-
-**这是防止AI随意发挥的关键机制！**
-
-workflow.yaml 中定义了严格的约束规则（`mandatory_constraint_enforcement`）：
-
-#### 工具使用约束
-```yaml
-- PROHIBIT_UNDEFINED_MCP_TOOLS: 禁止使用未验证的MCP工具
-- REQUIRE_TOOL_AVAILABILITY_CHECK: 强制检查工具可用性
-- PROHIBIT_EXTERNAL_TOOL_ASSUMPTIONS: 禁止假设外部工具存在
+my_app/
+├── main.py              # 入口点
+├── nodes.py             # 节点定义
+├── flow.py              # 流程定义(可选,复杂流程时使用)
+├── utils/               # 工具函数
+│   ├── __init__.py
+│   └── call_llm.py      # LLM 调用等
+├── requirements.txt     # 依赖
+└── README.md            # 使用说明
 ```
 
-**执行时**: 只使用已验证的内置工具（Read, Write, Edit, Bash等）
+2. **Shared Store 结构**: 定义数据字段
 
-#### 模板引用约束
-```yaml
-- REQUIRE_TEMPLATE_EXISTENCE_VALIDATION: 强制验证模板文件存在
-- PROHIBIT_FICTIONAL_TEMPLATES: 禁止引用虚构的模板
-- REQUIRE_TEMPLATE_DIRECTORY_SCAN: 强制扫描实际模板目录
+3. **Node 列表**: 每个节点的名称、类型、职责
+
+4. **Flow 图**: 使用 Mermaid 格式的流程图
+
+**输出**: 架构设计文档(Markdown)
+
+### 第五步:推断项目配置
+
+**任务**: 分析当前环境,推断技术配置
+
+**推断内容**:
+- Python 版本 (检查 `python --version`)
+- 虚拟环境管理 (检查是否存在 venv/conda)
+- PocketFlow 安装位置
+- LLM 提供商偏好 (检查环境变量 OPENAI_API_KEY/ANTHROPIC_API_KEY 等)
+
+**输出**: 项目配置建议
+
+### 第六步:生成代码
+
+**任务**: 生成完整的应用代码
+
+**生成顺序**:
+1. **requirements.txt**: 列出所有依赖
+2. **utils/*.py**: 工具函数(如 call_llm.py)
+3. **nodes.py**: 所有节点定义
+4. **flow.py** (可选): 复杂流程定义
+5. **main.py**: 入口点和示例运行代码
+6. **README.md**: 使用说明和示例
+
+**代码风格**:
+- 遵循 PocketFlow 的 prep-exec-post 三步模型
+- 包含完整的 docstring 和注释
+- 每个文件包含 `if __name__ == "__main__"` 测试代码
+- 工具函数不捕获异常,利用 Node 的重试机制
+
+**输出**: 完整的项目代码文件
+
+### 第七步:生成文档
+
+**任务**: 生成项目文档和使用说明
+
+**文档内容**:
+1. **README.md**:
+   - 项目简介
+   - 安装步骤
+   - 快速开始
+   - 配置说明
+   - 示例用法
+   - 架构说明(包含 Mermaid 图)
+
+2. **inline 注释**:
+   - 每个 Node 的详细说明
+   - 关键逻辑的解释
+   - Shared Store 字段说明
+
+**输出**: 完整的项目文档
+
+### 第八步:质量检查
+
+**任务**: 检查生成的代码质量
+
+**检查项**:
+- ✅ 所有 import 都可用
+- ✅ Node 遵循 prep-exec-post 模型
+- ✅ exec 中不访问 shared
+- ✅ BatchNode 的 post 正确处理 exec_res_list
+- ✅ AsyncNode 配合 AsyncFlow 使用
+- ✅ 工具函数包含测试代码
+- ✅ README 完整清晰
+
+**输出**: 质量检查报告
+
+### 第九步:项目初始化(可选)
+
+**任务**: 如果用户需要,帮助初始化项目环境
+
+**初始化步骤**:
+```bash
+# 创建项目目录
+mkdir -p my_app/utils
+
+# 安装依赖
+pip install -r my_app/requirements.txt
+
+# 运行测试
+cd my_app && python main.py
 ```
 
-**执行时**: 必须先扫描并验证模板文件实际存在
-
-#### 角色分配约束
-```yaml
-- REQUIRE_ROLE_DEFINITION_VALIDATION: 强制验证角色定义存在
-- PROHIBIT_INVALID_ROLE_COMBINATIONS: 禁止无效的角色组合
-- REQUIRE_AUTHORITY_HIERARCHY_VALIDATION: 强制验证权威层次
-```
-
-**执行时**: 只使用 `agents/roles/` 中实际存在的角色
-
-#### 架构合规约束
-```yaml
-- REQUIRE_POCKETFLOW_ARCHITECTURE_COMPLIANCE: 强制遵循PocketFlow 3.0架构
-- PROHIBIT_ARCHITECTURE_VIOLATIONS: 禁止违反架构规范
-- REQUIRE_COMPONENT_SEPARATION_VALIDATION: 强制验证组件分离
-```
-
-**执行时**: 生成的工作流必须符合PocketFlow架构规范
-
-### 第六步：智能角色选择引擎
-
-根据用户需求和工作流类型，智能选择合适的角色组合。
-
-#### 工作流类型与角色映射
-```yaml
-development: [tech_lead, senior_engineer, quality_expert, sdet]
-architecture_design: [system_architect, tech_lead, security_expert]
-quality_assurance: [quality_expert, sdet, performance_expert]
-security_review: [security_expert, tech_lead, quality_expert]
-requirements_analysis: [business_analyst, product_owner, system_architect]
-performance_optimization: [performance_expert, senior_engineer]
-```
-
-#### 角色选择算法
-```
-1. 分析用户需求中的关键词
-2. 确定工作流类型
-3. 匹配必需角色和可选角色
-4. 评分并选择最优组合
-5. 验证角色协作可行性
-```
-
-#### 评分权重
-- 工作流上下文匹配: 35%
-- 关键词相关性: 25%
-- 协作协同效应: 20%
-- 权限对齐度: 15%
-- 专业化深度: 5%
-
-### 第七步：项目规范自动推断
-
-**新增能力**: 自动分析目标项目，推断技术栈和规范。
-
-#### 推断步骤
-```
-1. 扫描项目结构（pom.xml, build.gradle, package.json等）
-2. 识别技术栈（Java/Spring, Node.js, Python等）
-3. 分析测试框架（JUnit, Mockito, Jest等）
-4. 检测代码规范（Checkstyle, ESLint等）
-5. 推断构建工具（Maven, Gradle, npm等）
-```
-
-#### 应用到工作流生成
-- 自动配置合适的构建命令
-- 选择对应的测试框架配置
-- 应用相应的代码质量标准
-- 设置合适的目录路径
-
-### 第八步：严格按照元 Skill 定义执行
-
-按照 workflow.yaml 中定义的阶段生成新 Skill：
-
-#### 阶段1：需求理解与意图分析
-- 解析用户自然语言需求
-- 识别 Skill 类型和目标
-- 确定关键功能和约束
-
-#### 阶段2：Cookbook Skills 模式学习
-- 扫描 skills/pocketflow/cookbook/ 目录
-- 读取相似 Skills 的 SKILL.md 和 workflow.yaml
-- 分析双层架构的设计模式
-- 提取可复用的结构和规范
-
-#### 阶段3：项目规范推断
-- 分析目标项目结构
-- 推断技术栈和工具
-- 确定适配配置
-
-#### 阶段4：智能角色选择
-- 根据 Skill 类型选择角色
-- 验证角色定义存在性
-- 确定角色协作关系
-
-#### 阶段5：知识库集成
-- 扫描 knowledge/ 目录
-- 匹配相关的知识文件
-- 集成到 Skill 配置
-
-#### 阶段6：SKILL.md 生成（增强版）
-- **生成 SKILL.md 文件**（关键步骤）
-- 编写触发场景描述
-- 生成8-9步详细执行指令
-- 创建路径解析映射表
-- 编写核心特性说明
-- 提供使用示例
-- 定义适用场景
-
-#### 阶段7：workflow.yaml 生成
-- 生成主导角色配置
-- 定义执行阶段
-- 配置任务和依赖
-- 应用约束规则
-
-#### 阶段8：约束注入与质量验证
-- 应用PROHIBIT/REQUIRE/ALLOW约束
-- 设置质量门禁
-- 验证 Skill 结构完整性
-- 检查双层架构一致性
-
-#### 阶段9：Skill 目录结构输出
-- 创建 Skill 目录
-- 输出 SKILL.md 文件
-- 输出 workflow.yaml 文件
-- 创建使用说明文档
-- 提供示例和测试建议
-
-### 第九步：输出成果
-
-生成的 Skill 包含完整的双层架构：
-
-**1. Skill 目录结构**
-```
-skills/pocketflow/cookbook/your-skill/
-├── SKILL.md          # 增强版 Skill 定义
-└── workflow.yaml     # 完整工作流定义
-```
-
-**2. SKILL.md 内容**（增强版格式）
-- YAML frontmatter（name, description, allowed-tools）
-- 触发场景描述
-- ⚡ 执行指令（8-9步详细说明）
-- 依赖路径解析表
-- 核心特性说明
-- 工作流阶段概览
-- 使用示例
-- 质量保证说明
-- 适用/不适用场景
-
-**3. workflow.yaml 内容**
-- 完整的工作流定义
-- 角色驱动执行配置
-- 约束驱动保证机制
-- 质量门禁设置
-- 阶段和任务定义
-
-**4. 文档**
-- 使用说明
-- 示例和测试建议
+**输出**: 初始化完成确认
 
 ## 核心特性
 
-### 🧠 智能角色选择引擎
-- **多维度评分**: 基于上下文、关键词、协作、权限的综合评分
-- **角色组合优化**: 自动选择最优角色协作组合
-- **验证机制**: 确保选择的角色实际存在于系统中
-- **协作分析**: 评估角色间协作可行性
+### 🧠 智能模式识别
+- 自动识别 Agent/Workflow/RAG/Batch 等模式
+- 基于关键词和需求上下文智能匹配
+- 无需用户明确指定应用类型
 
 ### 📚 Cookbook 模式学习
-- **模式提取**: 从现有高质量工作流中学习设计模式
-- **结构分析**: 分析成功工作流的阶段设计
-- **质量标准**: 继承Cookbook级别的质量标准
-- **最佳实践**: 自动应用已验证的最佳实践
+- 从现有高质量示例中学习设计模式
+- 继承 PocketFlow 最佳实践
+- 自动应用已验证的代码结构
 
-### 🔍 项目规范自动推断
-- **技术栈识别**: 自动识别Java/Node.js/Python等技术栈
-- **工具检测**: 检测Maven/Gradle/npm等构建工具
-- **框架分析**: 识别Spring/Express/Django等框架
-- **规范适配**: 自动适配项目特定的规范和配置
+### 🔍 自动项目推断
+- 检测当前 Python 环境
+- 识别 LLM 提供商配置
+- 推荐合适的依赖和配置
 
-### 🛡️ 强制约束执行
-- **工具验证**: 只使用实际可用的工具
-- **模板验证**: 强制验证模板文件存在性
-- **角色验证**: 确保角色定义真实存在
-- **架构合规**: 强制遵循PocketFlow架构规范
+### 🎯 轻量级设计
+- 不依赖复杂的外部配置
+- 自包含,可迁移到任何项目
+- 仅使用 Claude Code 内置工具
 
-### 🎯 知识库智能集成
-- **自动发现**: 扫描knowledge目录匹配相关知识
-- **语义匹配**: 基于语义相似度选择知识
-- **上下文感知**: 根据工作流上下文集成知识
-- **合规增强**: 自动注入相关合规要求
-
-### 🎭 角色驱动架构
-- **系统架构师主导**: 端到端自主生成流程
-- **专家协作**: tech_lead, business_analyst, quality_expert后台支撑
-- **层次验证**: 权威层次自动验证
-- **职责清晰**: 每个角色有明确的职责范围
-
-## Skill 生成流程
-
-### 输入
-用户提供自然语言描述：
-```
-"我需要一个Spring Boot项目的CI/CD Skill，
-包含代码检查、单元测试、构建和部署。"
-```
-
-### 处理过程
-1. **意图分析**: 识别为"CI/CD类型 Skill"
-2. **技术栈**: 识别Spring Boot + Maven
-3. **角色选择**: tech_lead, senior_engineer, quality_expert
-4. **Cookbook Skills 参考**: 学习现有 Skills 的双层架构模式
-5. **阶段设计**: 代码检查 → 测试 → 构建 → 部署
-6. **SKILL.md 生成**: 编写增强版 Skill 定义
-7. **workflow.yaml 生成**: 创建完整工作流定义
-8. **约束注入**: 应用质量门禁和构建约束
-9. **知识集成**: 集成Java编码规范
-10. **Skill 输出**: 创建完整 Skill 目录结构
-
-### 输出
-
-**skills/pocketflow/cookbook/spring-boot-cicd/SKILL.md**:
-```markdown
----
-name: pocketflow-spring-boot-cicd
-description: Spring Boot CI/CD Pipeline Skill - 技术负责人主导...
-allowed-tools: [Read, Write, Edit, Bash, Task, Glob, Grep]
----
-
-# Spring Boot CI/CD Pipeline
-
-## 触发场景
-- "执行Spring Boot CI/CD流程..."
-- "构建并部署Spring Boot项目..."
-
-## ⚡ 执行指令（重要）
-
-### 第一步：读取完整工作流定义
-读取当前目录下的 workflow.yaml...
-
-### 第二步：理解工作流结构
-workflow.yaml 包含以下关键配置...
-
-### 第三步：依赖路径解析
-... (完整的路径映射表)
-
-... (其余执行指令)
-```
-
-**skills/pocketflow/cookbook/spring-boot-cicd/workflow.yaml**:
-```yaml
-id: spring-boot-cicd-pipeline
-title: "Spring Boot CI/CD Pipeline"
-primary_role:
-  role_id: "tech_lead"
-  execution_mode: "autonomous"
-
-stages:
-  - id: code-quality-check
-  - id: unit-test-execution
-  - id: build-and-package
-  - id: deployment
-
-constraint_driven_config:
-  constraint_priority: ["PROHIBIT", "REQUIRE", "ALLOW"]
-```
+### 📦 即插即用
+- 复制 skill 文件夹即可使用
+- 不需要安装额外依赖
+- 兼容所有 PocketFlow 项目
 
 ## 依赖说明
 
-### 核心角色（从 _shared/agents 访问）
-- `system-architect.yaml` - 系统架构师（主导角色）
-- `tech-lead.yaml` - 技术负责人
-- `business-analyst.yaml` - 业务分析师
-- `quality-expert.yaml` - 质量专家
-- `senior-engineer.yaml` - 高级工程师
-- **所有其他角色** - 根据需要动态选择
+### 必需资源
+- **PocketFlow Cookbook**: `cookbook/` 目录(作为参考示例)
+- **PocketFlow 核心**: `pocketflow/__init__.py`(框架代码)
 
-### 必需插件（从 _shared/plugins 访问）
-- `workflow-domain/` - 工作流转换和处理
-- `doc-domain/` - 文档处理和模板
-- `quality-domain/` - 质量分析引擎
-- `infrastructure-domain/` - 基础设施验证
-- `business-domain/` - 业务价值分析引擎
+### 可选资源
+- **项目文档**: `docs/` 目录(辅助理解)
+- **测试用例**: `tests/` 目录(参考测试模式)
 
-### Cookbook Skills 参考（关键依赖）
-- `../../../skills/pocketflow/cookbook/` - 所有已转换的 Cookbook Skills
-- 用于双层架构模式学习和质量标准参考
-- **参考已有 Skills 的 SKILL.md 编写模式**
-- **参考已有 Skills 的 workflow.yaml 结构**
-
-### 知识库
-- `../../_shared/knowledge/` - 行业知识、标准、规范
-
-## 执行配置
-
-- **执行模式**: 系统架构师主导 + 专家协作
-- **生成模式**: 自主工作流生成（autonomous_workflow_generation）
-- **约束级别**: 强制约束执行（BLOCKING）
-- **模式学习**: Cookbook模式自动学习
-- **规范推断**: 自动项目规范推断
-
-## 输出成果
-
-### Skill 目录结构
-```
-skills/pocketflow/cookbook/your-skill/
-├── SKILL.md          # 增强版 Skill 定义（300-500行）
-└── workflow.yaml     # 完整工作流定义（根据复杂度）
-```
-
-### SKILL.md 文件
-- **YAML frontmatter**: name, description, allowed-tools
-- **触发场景**: 5-10个自然语言触发示例
-- **执行指令**: 8-9步详细指令（关键核心）
-  - 读取 workflow.yaml
-  - 理解工作流结构
-  - 依赖路径解析（完整映射表）
-  - 特定步骤（如动态变量、约束执行等）
-  - 角色能力调用
-  - 输出成果
-- **核心特性**: 3-6个核心能力说明
-- **工作流阶段概览**: 各阶段简要描述
-- **依赖说明**: 角色、插件、约束框架
-- **使用示例**: 3种使用方式
-- **质量保证**: 质量标准说明
-- **适用/不适用场景**: 明确使用范围
-
-### workflow.yaml 文件
-- 完整的YAML格式工作流定义
-- 符合PocketFlow 3.0架构规范
-- 角色驱动执行配置
-- 约束驱动保证机制
-- 质量门禁设置
-- 阶段和任务详细定义
-
-### 文档
-- Skill 使用说明
-- 角色职责说明
-- 执行步骤文档
-- 示例和测试建议
+### 工具依赖
+- **Claude Code 内置工具**: Read, Write, Edit, Bash, Glob, Grep
+- **无需外部 MCP 工具**
 
 ## 使用示例
 
-### 示例1：生成CI/CD Skill
+### 示例1: 生成搜索智能体
+
+**用户输入**:
 ```
-帮我生成一个Maven项目的CI/CD Skill，需要包含：
-1. 代码质量检查（Checkstyle）
-2. 单元测试（JUnit + JaCoCo）
-3. 构建打包（mvn package）
-4. Docker镜像构建
-5. 部署到测试环境
+帮我生成一个搜索智能体,能够根据用户问题,决定是搜索网络还是直接回答。
 ```
 
-**输出**: `skills/pocketflow/cookbook/maven-cicd/` 目录，包含 SKILL.md 和 workflow.yaml
+**执行流程**:
+1. 识别为 Agent 类型
+2. 参考 `cookbook/pocketflow-agent/`
+3. 设计决策节点 + 搜索节点 + 回答节点
+4. 生成完整代码到 `search_agent/`
 
-### 示例2：生成需求分析 Skill
+**输出结构**:
 ```
-为我的团队创建一个需求分析 Skill，参考PocketFlow的intelligent-requirement-analysis模式，但要适配我们的Python项目。
-```
-
-**输出**: `skills/pocketflow/cookbook/python-requirement-analysis/` 目录
-
-### 示例3：生成安全审查 Skill
-```
-生成一个安全审查 Skill，包含：
-- 依赖漏洞扫描
-- 代码安全审计
-- 配置安全检查
-- 安全测试用例
+search_agent/
+├── main.py
+├── nodes.py
+├── utils/
+│   ├── call_llm.py
+│   └── search_web.py
+├── requirements.txt
+└── README.md
 ```
 
-**输出**: `skills/pocketflow/cookbook/security-review/` 目录
+### 示例2: 生成文章写作工作流
+
+**用户输入**:
+```
+创建一个文章写作工作流: 大纲 → 写作 → 审核 → 优化
+```
+
+**执行流程**:
+1. 识别为 Workflow 类型
+2. 参考 `cookbook/pocketflow-workflow/`
+3. 设计线性流程节点
+4. 生成完整代码到 `article_writer/`
+
+### 示例3: 生成批量翻译应用
+
+**用户输入**:
+```
+我需要批量翻译 Markdown 文件,每个文件翻译成多种语言
+```
+
+**执行流程**:
+1. 识别为 BatchFlow 类型
+2. 参考 `cookbook/pocketflow-batch-flow/`
+3. 设计批处理流程
+4. 生成完整代码到 `batch_translator/`
 
 ## 约束和限制
 
 ### 强制约束（PROHIBIT）
-- ❌ **禁止使用未验证的MCP工具** - 只使用builtin工具
-- ❌ **禁止引用虚构的模板** - 必须验证模板存在
-- ❌ **禁止无效的角色组合** - 只使用实际存在的角色
-- ❌ **禁止违反架构规范** - 必须符合PocketFlow架构
+- ❌ **禁止引用不存在的文件** - 所有路径必须验证
+- ❌ **禁止违反 PocketFlow 规范** - 遵循 prep-exec-post 模型
+- ❌ **禁止过度工程** - 保持代码简洁
+- ❌ **禁止在 exec 中访问 shared** - 严格遵守节点模型
 
 ### 必需要求（REQUIRE）
-- ✅ **必须扫描Cookbook Skills目录** - 学习现有 Skills 模式
-- ✅ **必须生成 SKILL.md 文件** - 增强版格式，包含执行指令
-- ✅ **必须生成 workflow.yaml 文件** - 完整工作流定义
-- ✅ **必须验证工具可用性** - 检查工具是否可用
-- ✅ **必须验证角色存在性** - 确认角色定义存在
-- ✅ **必须应用约束机制** - 生成的 Skill 包含约束
+- ✅ **必须扫描 Cookbook 目录** - 学习参考示例
+- ✅ **必须生成完整项目结构** - 包括 README 和测试
+- ✅ **必须验证代码质量** - 运行质量检查
+- ✅ **必须包含详细注释** - 代码可读性优先
 
 ### 允许操作（ALLOW）
-- ✅ **允许灵活的阶段设计** - 根据需求定制阶段
-- ✅ **允许角色组合创新** - 在验证基础上创新组合
-- ✅ **允许知识库扩展** - 集成额外的知识文件
+- ✅ **允许灵活的目录结构** - 根据复杂度调整
+- ✅ **允许选择 LLM 提供商** - 支持 OpenAI/Anthropic/本地模型
+- ✅ **允许自定义工具函数** - 根据需求扩展
 
 ## 质量保证
 
-- ✅ **Cookbook Skills 模式保证** - 继承已验证的高质量 Skills 模式
-- ✅ **双层架构一致性** - SKILL.md + workflow.yaml 结构一致
-- ✅ **增强版 SKILL.md 格式** - 包含完整的8-9步执行指令
-- ✅ **强制约束执行** - 防止生成不合规 Skill
-- ✅ **角色验证机制** - 确保角色配置正确
-- ✅ **架构合规检查** - 符合 PocketFlow + Claude Skills 双重规范
-- ✅ **工具可用性验证** - 只使用可用的工具
-- ✅ **文件存在性验证** - 确保引用的文件存在
-
-## 工作流详细定义
-
-**完整元工作流定义**：`workflow.yaml` (3054行)
-
-该文件包含：
-- 系统架构师主导的角色配置
-- 智能角色选择引擎的完整实现
-- Cookbook模式学习机制
-- 项目规范自动推断逻辑
-- 知识库集成引擎
-- 强制约束执行机制
-- 9个工作流生成阶段的详细定义
-- 质量验证和输出规范
-
-**执行时必须严格按照 workflow.yaml 中的定义执行，特别是：**
-- 强制约束执行机制（mandatory_constraint_enforcement）
-- Cookbook模式学习步骤
-- 角色选择算法和评分规则
-- 项目规范推断逻辑
-- 架构合规验证
+- ✅ **Cookbook 模式保证** - 继承已验证的设计模式
+- ✅ **架构合规检查** - 符合 PocketFlow 规范
+- ✅ **代码风格一致** - 遵循项目惯例
+- ✅ **完整文档生成** - README 和注释齐全
+- ✅ **可运行性验证** - 生成的代码可直接运行
 
 ## 适用场景
 
-- ✅ 快速创建定制化研发工作流
+- ✅ 快速创建 PocketFlow 应用原型
+- ✅ 学习 PocketFlow 设计模式
 - ✅ 标准化团队开发流程
-- ✅ 适配不同技术栈的项目
-- ✅ 复用Cookbook最佳实践
-- ✅ 企业级工作流规范化
+- ✅ 复用 Cookbook 最佳实践
 - ✅ 新项目快速启动
 
 ## 不适用场景
 
-- ❌ 简单任务（不需要完整工作流）
-- ❌ 一次性脚本（工作流过于复杂）
-- ❌ 非结构化任务（难以定义阶段）
+- ❌ 非 PocketFlow 框架的项目
+- ❌ 需要复杂角色权限系统的企业场景
+- ❌ 一次性脚本(不需要完整应用结构)
 
 ## 技术亮点
 
-### 1. 元编程能力
-通过 Skill 生成 Skill，实现自动化的自动化
+### 1. 轻量级设计
+- 仅依赖 Cookbook 示例,无需复杂配置
+- 自包含,可随项目迁移
 
-### 2. 双层架构生成
-同时生成 SKILL.md（增强版）和 workflow.yaml（完整定义）
+### 2. 智能学习
+- 从 Cookbook 中自动提取设计模式
+- 基于需求智能匹配参考示例
 
-### 3. 模式学习机制
-从 Cookbook Skills 中学习成功模式，避免重复设计
+### 3. 代码生成
+- 生成符合规范的完整项目结构
+- 包含测试、文档、工具函数
 
-### 4. 智能角色匹配
-多维度评分算法，自动选择最优角色组合
+### 4. 质量保证
+- 自动质量检查
+- 遵循 PocketFlow 最佳实践
 
-### 5. 约束驱动保证
-强制约束执行，防止AI随意发挥产生不可用 Skill
-
-### 6. 自适应配置
-自动推断项目规范，无需手动配置
-
-### 7. 知识库增强
-智能集成相关知识，提升 Skill 质量
-
-### 8. Claude Skills 标准兼容
-生成的 Skill 完全符合 Claude Skills 最佳实践
+### 5. 即插即用
+- 复制即用,无需配置
+- 兼容所有 PocketFlow 项目
 
 ---
 
 **重要提示**:
-1. 这是一个高级元 Skill，用于生成其他 Claude Skills（而非生成原始 YAML 工作流）
-2. 执行时需要访问 `skills/pocketflow/cookbook/` 目录学习已有 Skills 模式
-3. 生成的输出是**完整的 Skill 目录结构**：SKILL.md + workflow.yaml
-4. 请确保 Cookbook Skills、知识库、agents、plugins 路径可访问
+1. 这是一个轻量级、可迁移的 skill
+2. 执行时需要访问 `cookbook/` 目录作为参考
+3. 生成的输出是完整的 PocketFlow 应用项目
+4. 不依赖复杂的外部配置,即插即用

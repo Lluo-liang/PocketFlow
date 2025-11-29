@@ -1,3046 +1,441 @@
-# PocketFlow 3.0 智能工作流生成引擎 - 角色驱动版本
-id: intelligent-workflow-generator
-title: "智能工作流生成引擎"
-version: "3.0-role-driven"
-description: "基于系统架构师主导+专家委派模式的智能工作流生成系统，自动应用cookbook级别质量模式"
+# PocketFlow 轻量级工作流生成器 - 简化版
+id: pocketflow-workflow-generator
+title: "PocketFlow 应用生成器"
+version: "2.0-lightweight"
+description: "轻量级、可迁移的 PocketFlow 应用生成器,基于 Cookbook 示例学习,生成完整的应用代码"
 
-# 🎭 主导角色配置（角色驱动执行模式）
-primary_role:
-  role_id: "system_architect"
-  role_name: "系统架构师"
-  role_definition: "$ref: ../../_shared/agents/roles/system-architect.yaml"
-  execution_mode: "autonomous_workflow_generation"
-  authority_level: "WORKFLOW_ARCHITECT"
+# ========================================
+# 执行模式配置
+# ========================================
+execution_mode:
+  type: "autonomous_code_generation"
+  style: "cookbook_based_learning"
+  tools_allowed: ["Read", "Write", "Edit", "Bash", "Glob", "Grep", "Task"]
 
-  # 角色能力集成（自动调用其他角色的专业能力）
-  integrated_capabilities:
-    technical_validation: "自动调用tech_lead能力进行技术验证"
-    requirement_analysis: "自动调用business_analyst能力进行需求分析"
-    quality_assurance: "自动调用quality_expert能力进行质量保证"
-    role_selection: "自动调用智能角色选择引擎"
-    industry_knowledge: "自动调用行业知识匹配能力"
-    project_standards_inference: "自动调用AI项目规范推断能力"  # 新增
-
-  # 自动化执行配置
-  autonomous_execution:
-    auto_analysis: true
-    auto_workflow_generation: true
-    auto_quality_injection: true
-    auto_project_standards_inference: true  # 新增：自动项目规范推断
-    user_intervention_points: ["requirement_confirmation", "architecture_decision_validation", "final_review"]
-
-# 后台支持角色（不直接暴露给用户）
-background_roles:
-  - role_id: "tech_lead"
-    usage: "technical_validation_capability"
-    role_definition: "$ref: ../../_shared/agents/roles/tech-lead.yaml"
-  - role_id: "business_analyst"
-    usage: "requirement_analysis_capability"
-    role_definition: "$ref: ../../_shared/agents/roles/business-analyst.yaml"
-  - role_id: "quality_expert"
-    usage: "quality_assurance_capability"
-    role_definition: "$ref: ../../_shared/agents/roles/quality-expert.yaml"
-  - role_id: "senior_engineer"
-    usage: "implementation_guidance_capability"
-    role_definition: "$ref: ../../_shared/agents/roles/senior-engineer.yaml"
-
-# 🎯 目标用户群体定义
-target_audience:
-  primary_users:
-    - role: "开发团队负责人"
-      expectations: ["快速工作流生成", "架构合规保证", "质量标准统一"]
-    - role: "项目经理"
-      expectations: ["标准化流程", "风险控制", "效率提升"]
-    - role: "技术负责人"
-      expectations: ["技术方案验证", "实施指导", "质量把关"]
-
-  secondary_users:
-    - role: "业务分析师"
-      expectations: ["需求理解支持", "业务价值分析", "干系人管理"]
-    - role: "质量工程师"
-      expectations: ["质量标准应用", "测试策略制定", "合规性保证"]
-
-# 约束驱动配置
-constraint_driven_config:
-  execution_path_control:
-    strict_sequence: true
-    prevent_backtrack: false
-    state_lock_enforcement: true
-    dependency_chain_validation: true
-  constraint_priority: ["PROHIBIT", "REQUIRE", "ALLOW"]
-
-  # 🚫 强制约束执行机制 - 防止AI随意发挥
-  mandatory_constraint_enforcement:
-    enabled: true
-    enforcement_level: "BLOCKING"  # 阻断级别执行
-    violation_handling: "ABORT_GENERATION"  # 违规时中止生成
-
-    # 核心约束规则 - 必须严格遵守
-    core_constraints:
-      # 工具使用约束
-      tool_usage_constraints:
-        - rule: "PROHIBIT_UNDEFINED_MCP_TOOLS"
-          description: "禁止使用未经验证的MCP工具"
-          enforcement: "pre_generation_validation"
-          violation_action: "REPLACE_WITH_BUILTIN_TOOLS"
-
-        - rule: "REQUIRE_TOOL_AVAILABILITY_CHECK"
-          description: "强制检查工具可用性"
-          enforcement: "mandatory_validation"
-          failure_action: "ABORT_TASK_GENERATION"
-
-        - rule: "PROHIBIT_EXTERNAL_TOOL_ASSUMPTIONS"
-          description: "禁止假设外部工具存在"
-          enforcement: "pre_task_validation"
-          violation_action: "USE_VERIFIED_ALTERNATIVES"
-
-      # 模板引用约束
-      template_reference_constraints:
-        - rule: "REQUIRE_TEMPLATE_EXISTENCE_VALIDATION"
-          description: "强制验证模板文件存在性"
-          enforcement: "pre_reference_check"
-          failure_action: "REMOVE_INVALID_REFERENCES"
-
-        - rule: "PROHIBIT_FICTIONAL_TEMPLATES"
-          description: "禁止引用虚构的模板文件"
-          enforcement: "strict_path_validation"
-          violation_action: "ABORT_GENERATION"
-
-        - rule: "REQUIRE_TEMPLATE_DIRECTORY_SCAN"
-          description: "强制扫描实际模板目录"
-          enforcement: "mandatory_discovery_phase"
-          failure_action: "USE_AVAILABLE_TEMPLATES_ONLY"
-
-      # 角色分配约束
-      role_assignment_constraints:
-        - rule: "REQUIRE_ROLE_DEFINITION_VALIDATION"
-          description: "强制验证角色定义存在"
-          enforcement: "pre_assignment_check"
-          failure_action: "USE_DEFAULT_ROLES"
-
-        - rule: "PROHIBIT_INVALID_ROLE_COMBINATIONS"
-          description: "禁止无效的角色组合"
-          enforcement: "combination_validation"
-          violation_action: "APPLY_VALID_COMBINATIONS"
-
-        - rule: "REQUIRE_AUTHORITY_HIERARCHY_VALIDATION"
-          description: "强制验证权威层次合理性"
-          enforcement: "hierarchy_check"
-          failure_action: "APPLY_DEFAULT_HIERARCHY"
-
-      # 架构合规约束
-      architecture_compliance_constraints:
-        - rule: "REQUIRE_POCKETFLOW_ARCHITECTURE_COMPLIANCE"
-          description: "强制遵循PocketFlow 3.0架构规范"
-          enforcement: "structural_validation"
-          failure_action: "ENFORCE_ARCHITECTURE_PATTERNS"
-
-        - rule: "PROHIBIT_ARCHITECTURE_VIOLATIONS"
-          description: "禁止违反架构规范的设计"
-          enforcement: "design_validation"
-          violation_action: "ABORT_GENERATION"
-
-        - rule: "REQUIRE_COMPONENT_SEPARATION_VALIDATION"
-          description: "强制验证组件分离符合规范"
-          enforcement: "separation_check"
-          failure_action: "APPLY_STANDARD_SEPARATION"
-
-# 依赖 - 基于真实可用资源
+# ========================================
+# 依赖资源
+# ========================================
 requires:
-  # 插件动态发现配置 - 扫描 _shared/plugins/ 目录下所有 *-domain 插件
-  plugins_discovery:
-    enabled: true
-    scan_directory: "../../_shared/plugins/"
-    pattern: "*-domain"
-    auto_detect: true
-
-  # 重要：基于实际可用的MCP工具和内置工具
-  available_builtin_tools: [
-    "Read", "Write", "Edit", "MultiEdit", "Grep", "Glob", "LS", "Bash"
-  ]
-
-  # 动态MCP工具发现配置 - 扫描integrations文件夹
-  dynamic_mcp_discovery:
-    integrations_directory: "../../_shared/core/integrations/"
-    discovery_strategy: "scan_and_parse_integration_docs"
-    supported_formats: [".md", ".yaml", ".yml", ".json"]
-    auto_refresh: true
-    cache_duration: "1h"
-
-  # 资源验证要求
-  resource_validation_required: true
-  template_existence_check: true
-  plugin_availability_check: true
-
-  # 🔒 强制验证和阻断机制
-  mandatory_validation_and_blocking:
-    enabled: true
-    validation_mode: "STRICT_BLOCKING"
-    failure_tolerance: 0  # 零容忍失败
-
-    # 预执行验证检查点
-    pre_execution_checkpoints:
-      checkpoint_1_resource_discovery:
-        validation_target: "available_resources"
-        required_validations:
-          - "scan_actual_template_directories"
-          - "verify_plugin_definitions_exist"
-          - "validate_mcp_tool_availability"
-          - "check_role_definition_files"
-        blocking_condition: "any_validation_fails"
-        failure_action: "ABORT_WITH_RESOURCE_REPORT"
-
-      checkpoint_2_constraint_validation:
-        validation_target: "constraint_rules"
-        required_validations:
-          - "validate_tool_usage_rules"
-          - "check_template_reference_rules"
-          - "verify_role_assignment_rules"
-          - "validate_architecture_compliance_rules"
-        blocking_condition: "constraint_violation_detected"
-        failure_action: "ABORT_WITH_CONSTRAINT_REPORT"
-
-      checkpoint_3_dependency_validation:
-        validation_target: "workflow_dependencies"
-        required_validations:
-          - "validate_stage_dependencies"
-          - "check_role_dependency_chains"
-          - "verify_resource_dependency_availability"
-          - "validate_execution_sequence"
-        blocking_condition: "dependency_chain_broken"
-        failure_action: "ABORT_WITH_DEPENDENCY_REPORT"
-
-    # 执行中验证检查点
-    runtime_validation_checkpoints:
-      checkpoint_task_generation:
-        validation_target: "generated_tasks"
-        required_validations:
-          - "validate_tool_references_exist"
-          - "check_template_paths_valid"
-          - "verify_role_assignments_valid"
-          - "validate_constraint_compliance"
-        blocking_condition: "invalid_task_detected"
-        failure_action: "FIX_OR_ABORT_TASK"
-
-      checkpoint_workflow_assembly:
-        validation_target: "assembled_workflow"
-        required_validations:
-          - "validate_workflow_structure_compliance"
-          - "check_all_references_resolvable"
-          - "verify_execution_path_valid"
-          - "validate_quality_standards_met"
-        blocking_condition: "workflow_integrity_compromised"
-        failure_action: "ABORT_WITH_ASSEMBLY_REPORT"
-
-    # 后验证检查点
-    post_generation_checkpoints:
-      checkpoint_final_validation:
-        validation_target: "final_workflow"
-        required_validations:
-          - "validate_all_external_references"
-          - "check_cookbook_pattern_compliance"
-          - "verify_architecture_standards_met"
-          - "validate_execution_feasibility"
-        blocking_condition: "final_validation_fails"
-        failure_action: "ABORT_WITH_COMPREHENSIVE_REPORT"
-  external_apis:
-    - openai_gpt4  # 深度语义理解
-    - anthropic_claude  # 逻辑推理分析
-    - github_copilot  # 代码模式识别
-
-  # 资源发现和验证引擎 - 基于PocketFlow 3.0实际能力
-  resource_discovery_validation_engine:
-    # 🔍 强制资源扫描和验证
-    mandatory_resource_scanning:
-      enabled: true
-      scan_mode: "COMPREHENSIVE_STRICT"
-      validation_required: true
-      cache_validation_results: true
-
-    template_discovery:
-      scan_directories: ["../../_shared/plugins/*/templates/", "templates/"]
-      supported_formats: [".mdc", ".yaml", ".yml", ".md"]
-      auto_cataloging: true
-      # 新增：强制验证机制
-      mandatory_validation:
-        verify_file_existence: true
-        check_file_readability: true
-        validate_template_syntax: true
-        catalog_template_capabilities: true
-        failure_handling: "EXCLUDE_INVALID_TEMPLATES"
-
-    plugin_capability_detection:
-      scan_plugin_directories: true
-      extract_plugin_definitions: true
-      validate_plugin_dependencies: true
-      # 新增：强制插件验证
-      mandatory_plugin_validation:
-        verify_plugin_yaml_exists: true
-        validate_plugin_structure: true
-        check_template_directory_exists: true
-        verify_plugin_dependencies_resolvable: true
-        failure_handling: "EXCLUDE_INVALID_PLUGINS"
-
-    mcp_tool_capability_verification:
-      # PocketFlow 3.0 实际MCP工具验证
-      xmind_analysis_integration_check: true  # 验证XMind分析工具集
-      external_mcp_tools_check: false  # 不假设外部MCP工具存在
-      fallback_strategy_required: true
-      # 新增：MCP工具强制验证
-      mandatory_mcp_validation:
-        verify_integration_docs_exist: true
-        validate_tool_definitions: true
-        check_tool_accessibility: true
-        test_tool_basic_functionality: false  # 不执行实际测试
-        failure_handling: "USE_BUILTIN_ALTERNATIVES"
-
-      # 智能工具选择策略
-      tool_selection_priority:
-        1: "task_master_tools"  # 优先使用Task-Master专业工具
-        2: "xmind_analysis_tools"  # 其次使用XMind分析工具
-        3: "available_builtin_tools"  # 最后使用内置工具
-
-      # 新增：工具可用性强制检查矩阵
-      tool_availability_enforcement_matrix:
-        builtin_tools_always_available: ["Read", "Write", "Edit", "MultiEdit", "Grep", "Glob", "LS", "Bash", "Task"]
-        mcp_tools_require_verification: ["task_master.*", "xmind_analysis.*"]
-        external_tools_prohibited: ["undefined_mcp.*", "fictional_tools.*"]
-        fallback_mapping_required: true
-        violation_handling: "ABORT_AND_REPORT"
-
-# 变量
-variables:
-  PLM_DIR: "PLM-${git_branch_normalized}"
-  OUTPUT_DIR: "workflows/user-workflows"
-  PROJECT_ROOT: "${cwd}"
-  ANALYSIS_CACHE: "${PLM_DIR}/analysis-cache"
-
-# 🤖 AI驱动项目规范感知引擎
-ai_driven_project_standards_engine:
-  description: "利用AI能力自动推断项目规范，指导工作流生成和代码生成"
-
-  # AI规范推断核心
-  ai_standards_inference:
-    approach: "semantic_analysis_with_pattern_recognition"
-    supported_languages: ["java", "javascript", "python", "php"]
-
-    # AI语义分析配置
-    semantic_analysis:
-      analysis_prompt_template: |
-        分析以下项目代码样本，推断项目的核心规范：
-        
-        项目文件结构: {project_structure}
-        代码样本: {code_samples}
-        配置文件: {config_files}
-        
-        请从以下维度分析项目规范：
-        1. 命名规范 (类、方法、变量、文件)
-        2. 代码组织规范 (包结构、模块划分、分层架构、命名空间)
-        3. 质量标准 (复杂度、测试、文档)
-        4. 技术偏好 (框架选择、设计模式、工具链、依赖管理)
-        5. 团队协作规范 (代码风格、提交规范、分支策略)
-        
-        特别关注以下语言特定模式：
-        - Java: Maven/Gradle配置、Spring框架使用、包命名约定
-        - JavaScript/TypeScript: npm配置、模块系统、框架选择
-        - Python: pip配置、包结构、虚拟环境使用
-        - PHP: Composer配置、PSR标准遵循、框架使用模式
-        
-        输出结构化的项目规范画像JSON。
-
-    # 样本采集策略
-    intelligent_sampling:
-      sampling_algorithm: "representative_diversity_sampling"
-      sample_targets:
-        code_files:
-          max_samples: 20
-          selection_criteria: "diversity_and_representativeness"
-          file_types: ["*.java", "*.js", "*.py", "*.ts", "*.php"]
-
-        config_files:
-          priority_files: ["package.json", "pom.xml", "requirements.txt", "tsconfig.json", "composer.json"]
-          build_configs: ["webpack.config.js", "build.gradle", "setup.py", "composer.lock"]
-
-        project_structure:
-          scan_depth: 3
-          focus_directories: ["src/", "lib/", "app/", "components/", "services/", "public/", "resources/", "config/"]
-
-  # 规范画像构建
-  standards_profile_construction:
-    # 核心规范维度
-    naming_conventions:
-      inference_method: "pattern_frequency_analysis"
-      confidence_threshold: 0.7
-
-    code_organization:
-      inference_method: "structural_pattern_recognition"
-      focus_areas: ["layering", "modularity", "separation_of_concerns"]
-
-    quality_standards:
-      inference_method: "threshold_pattern_analysis"
-      metrics: ["complexity", "coverage", "documentation_density"]
-
-    technology_preferences:
-      inference_method: "usage_pattern_analysis"
-      categories: ["frameworks", "libraries", "tools", "patterns"]
-
-    team_collaboration:
-      inference_method: "workflow_pattern_detection"
-      indicators: ["commit_patterns", "branch_naming", "pr_conventions"]
-
-    # AI增强分析
-    ai_enhanced_analysis:
-      context_enrichment: "利用AI理解项目业务上下文"
-      pattern_explanation: "AI解释识别到的规范模式的合理性"
-      evolution_prediction: "预测项目规范的可能演进方向"
-      adaptation_suggestions: "建议PocketFlow如何适配这些规范"
-
-  # 规范应用策略
-  standards_application_strategy:
-    # 工作流约束调整
-    workflow_constraint_adaptation:
-      constraint_mapping:
-        naming_standards: "调整代码生成的命名约束"
-        quality_thresholds: "调整质量门禁标准"
-        architectural_constraints: "应用架构规范约束"
-
-      adaptation_rules:
-        - rule: "项目使用驼峰命名 → 生成代码使用驼峰命名"
-        - rule: "项目有严格测试覆盖率 → 工作流强制测试要求"
-        - rule: "项目使用特定框架 → 选择兼容的工具和模板"
-
-    # 模板智能选择
-    template_intelligent_selection:
-      selection_algorithm: "standards_compatibility_scoring"
-      template_adaptation:
-        code_templates: "基于项目代码风格调整代码模板"
-        documentation_templates: "匹配项目文档格式和风格"
-        test_templates: "适配项目测试框架和模式"
-
-    # 领域划分优化
-    domain_classification_enhancement:
-      domain_inference:
-        business_domain: "从代码和项目结构推断业务领域"
-        technical_domain: "识别技术领域和架构特征"
-        team_culture: "推断团队文化和协作偏好"
-
-      domain_specific_adaptation:
-        constraint_specialization: "基于领域特征专门化约束规则"
-        workflow_customization: "为特定领域定制工作流模式"
-        tool_selection: "选择领域适配的工具和实践"
-
-  # 规范感知输出格式
-  project_standards_profile_format:
-    structure: |
-      {
-        "project_identity": {
-          "domain": "推断的业务领域",
-          "technology_stack": "主要技术栈",
-          "project_scale": "项目规模评估",
-          "team_maturity": "团队成熟度评估"
-        },
-        "naming_conventions": {
-          "classes": "类命名模式",
-          "methods": "方法命名模式", 
-          "variables": "变量命名模式",
-          "files": "文件命名模式",
-          "confidence": "推断置信度"
-        },
-        "code_organization": {
-          "package_structure": "包结构模式",
-          "layering_approach": "分层架构方式",
-          "module_boundaries": "模块边界定义",
-          "dependency_management": "依赖管理方式"
-        },
-        "quality_standards": {
-          "complexity_thresholds": "复杂度标准",
-          "testing_expectations": "测试要求",
-          "documentation_standards": "文档标准",
-          "code_review_practices": "代码审查实践"
-        },
-        "technology_preferences": {
-          "preferred_frameworks": "偏好的框架",
-          "common_patterns": "常用设计模式",
-          "toolchain": "工具链选择",
-          "integration_approaches": "集成方式"
-        },
-        "adaptation_strategy": {
-          "constraint_adjustments": "约束调整建议",
-          "template_selections": "模板选择建议",
-          "workflow_customizations": "工作流定制建议",
-          "code_generation_rules": "代码生成规则"
-        }
-      }
-
-  # 四大核心使用场景实现
-  core_use_cases_implementation:
-    # 场景1：新团队成员快速了解项目规范
-    team_onboarding:
-      capability: "自动生成项目规范指南"
-      implementation: "基于规范画像生成可读的规范文档"
-      output: "项目规范快速入门指南"
-
-    # 场景2：自动生成符合项目风格的代码
-    code_generation_compliance:
-      capability: "代码生成遵循项目规范"
-      implementation: "将规范画像应用到代码生成模板"
-      validation: "生成后自动检查规范一致性"
-
-    # 场景3：工作流模板的智能适配
-    workflow_template_adaptation:
-      capability: "智能选择和调整工作流模板"
-      implementation: "基于项目规范匹配最合适的工作流模式"
-      customization: "动态调整模板参数和约束"
-
-    # 场景4：项目规范一致性检查
-    consistency_validation:
-      capability: "检查工作流输出与项目规范的一致性"
-      implementation: "对比生成结果与项目规范画像"
-      feedback: "提供规范偏差报告和改进建议"
-
-# 🎭 智能角色选择引擎
-intelligent_role_selection_engine:
-  # 角色发现和分析
-  role_discovery:
-    roles_directory: "../../_shared/agents/roles/"
-    file_pattern: "*.yaml"
-    auto_scan: true
-    cache_duration: "1h"
-
-  # 角色匹配策略
-  role_matching_strategy:
-    matching_algorithm: "semantic_analysis + capability_matching + workflow_context"
-
-    # 工作流类型与角色的匹配模式
-    workflow_type_mapping:
-      development:
-        required_roles: ["tech_lead", "senior_engineer"]
-        optional_roles: ["quality_expert", "sdet"]
-        role_priority: ["technical_leadership", "technical_implementation"]
-
-      architecture_design:
-        required_roles: ["system_architect", "tech_lead"]
-        optional_roles: ["security_expert", "performance_expert"]
-        role_priority: ["architecture_authority", "strategic_authority"]
-
-      quality_assurance:
-        required_roles: ["quality_expert", "sdet"]
-        optional_roles: ["senior_engineer", "performance_expert"]
-        role_priority: ["quality_authority", "test_specialist"]
-
-      security_review:
-        required_roles: ["security_expert", "tech_lead"]
-        optional_roles: ["quality_expert", "system_architect"]
-        role_priority: ["security_authority", "strategic_authority"]
-
-      requirements_analysis:
-        required_roles: ["business_analyst", "product_owner", "system_architect"]
-        optional_roles: ["tech_lead", "quality_expert"]
-        role_priority: ["business_requirement_analysis", "business_authority", "architecture_authority"]
-
-      performance_optimization:
-        required_roles: ["performance_expert", "senior_engineer"]
-        optional_roles: ["system_architect", "sdet"]
-        role_priority: ["performance_authority", "implementation_expert"]
-
-    # 关键词匹配规则
-    keyword_matching_rules:
-      technical_keywords:
-        implementation: ["senior_engineer", "tech_lead"]
-        architecture: ["system_architect", "tech_lead"]
-        security: ["security_expert", "quality_expert"]
-        testing: ["sdet", "quality_expert"]
-        performance: ["performance_expert", "senior_engineer"]
-        requirements: ["business_analyst", "product_owner", "system_architect"]
-        quality: ["quality_expert", "sdet"]
-        leadership: ["tech_lead", "system_architect"]
-
-      domain_keywords:
-        # 通用领域关键词，由具体工作流自定义
-        security_critical: ["security_expert", "quality_expert"]
-        performance_critical: ["performance_expert", "quality_expert"]
-        architecture_intensive: ["system_architect", "tech_lead"]
-        business_focused: ["business_analyst", "product_owner"]
-
-    # 协作关系优化
-    collaboration_optimization:
-      enable_collaboration_analysis: true
-      preferred_combinations:
-        - ["tech_lead", "senior_engineer", "quality_expert"]  # 开发三角
-        - ["system_architect", "security_expert", "tech_lead"]  # 架构三角
-        - ["product_owner", "system_architect", "tech_lead"]  # 需求三角
-        - ["quality_expert", "sdet", "performance_expert"]  # 质量三角
-
-      avoid_combinations:
-        - ["product_owner", "sdet"]  # 业务与测试直接协作较少
-
-  # 角色选择算法
-  role_selection_algorithm:
-    selection_method: "multi_criteria_scoring"
-
-    # 评分权重配置
-    scoring_weights:
-      workflow_context_match: 0.35      # 工作流上下文匹配
-      keyword_relevance: 0.25           # 关键词相关性
-      collaboration_synergy: 0.20       # 协作协同效应
-      authority_alignment: 0.15         # 权限对齐度
-      specialization_depth: 0.05        # 专业化深度
-
-    # 选择阈值
-    selection_thresholds:
-      required_role_threshold: 0.8      # 必需角色阈值
-      optional_role_threshold: 0.6      # 可选角色阈值
-      max_roles_per_workflow: 6         # 每个工作流最大角色数
-      min_roles_per_workflow: 2         # 每个工作流最小角色数
-
-    # 角色选择优先级规则
-    priority_rules:
-      always_include_tech_lead: true    # 总是包含技术负责人
-      balance_authority_levels: true    # 平衡权限级别
-      ensure_quality_coverage: true     # 确保质量覆盖
-      avoid_role_redundancy: true       # 避免角色冗余
-
-  # 角色覆盖验证机制
-  role_coverage_validation:
-    expected_roles: [
-      "tech_lead", "senior_engineer", "quality_expert", "security_expert",
-      "sdet", "system_architect", "product_owner", "performance_expert", "business_analyst"
-    ]
-    coverage_checks:
-      workflow_type_coverage: "验证每种工作流类型都有对应的角色映射"
-      keyword_coverage: "验证每个技术关键词都有对应的角色"
-      collaboration_coverage: "验证所有角色都有定义的协作关系"
-      authority_coverage: "验证权限级别分布合理"
-
-    validation_rules:
-      - "所有expected_roles必须在workflow_type_mapping中出现"
-      - "所有expected_roles必须在keyword_matching_rules中被引用"
-      - "所有preferred_combinations必须使用expected_roles中的角色"
-      - "新增角色文件时自动更新expected_roles列表"
-
-# 🧠 综合智能分析引擎
-intelligent_analysis_engine:
-  # 多维度分析架构
-  analysis_dimensions:
-    - semantic_understanding    # 语义理解维度
-    - codebase_context         # 代码库上下文维度
-    - capability_assessment    # 能力评估维度
-    - industry_alignment      # 行业对齐维度
-    - user_preference_learning # 用户偏好学习维度
-    - progressive_refinement   # 渐进式细化维度
-    - interactive_guidance     # 交互式引导维度
-    - risk_exposure           # 风险暴露维度
-
-  # 🎯 语义理解引擎
-  semantic_understanding_engine:
-    llm_integration:
-      primary_model: "openai_gpt4"
-      fallback_model: "anthropic_claude"
-
-    analysis_prompts:
-      intent_extraction: |
-        分析以下用户需求，提取核心意图：
-        用户输入: "{user_input}"
-        项目信息: "{project_context}"
-        
-        请从以下维度分析：
-        1. 业务目标 - 用户想要解决什么业务问题？
-        2. 技术需求 - 涉及哪些技术栈和工具？
-        3. 质量要求 - 对质量、性能、安全有什么期望？
-        4. 流程偏好 - 倾向于什么样的工作方式？
-        5. 约束条件 - 有什么限制或特殊要求？
-        
-        输出JSON格式的结构化分析结果。
-
-      context_enrichment: |
-        基于项目代码库上下文，丰富用户需求理解：
-        代码库信息: "{codebase_analysis}"
-        用户原始需求: "{user_input}"
-        初步意图分析: "{intent_analysis}"
-        
-        请补充和完善：
-        - 技术栈相关的特殊考虑
-        - 项目架构约束
-        - 现有工作流模式
-        - 团队协作习惯推测
-
-      industry_contextualization: |
-        结合行业最佳实践，评估需求的合理性和完整性：
-        用户需求: "{enriched_intent}"
-        行业类型: "{detected_industry}"
-        
-        分析：
-        - 是否符合行业标准实践？
-        - 缺少哪些关键环节？
-        - 有什么潜在风险？
-        - 推荐哪些改进？
-
-    output_format:
-      intent_confidence: "0.0-1.0"
-      business_context: "structured_analysis"
-      technical_requirements: "detailed_specs"
-      quality_expectations: "measurable_criteria"
-      risk_assessment: "identified_risks"
-      improvement_suggestions: "actionable_recommendations"
-
-  # 📊 代码库智能分析引擎
-  codebase_analysis_engine:
-    scanning_strategies:
-      # 快速扫描 - 项目基础信息
-      quick_scan:
-        enabled: true
-        timeout: "30s"
-        targets:
-          - package_managers: ["pom.xml", "package.json", "requirements.txt", "Cargo.toml"]
-          - config_files: [".gitignore", "dockerfile", "docker-compose.yml"]
-          - documentation: ["README.md", "CHANGELOG.md", "API.md"]
-          - ci_cd: [".github/workflows", ".gitlab-ci.yml", "jenkins"]
-
-      # 深度分析 - 架构模式识别
-      deep_analysis:
-        enabled: true
-        timeout: "2m"
-        analysis_types:
-          - architecture_patterns: "识别MVC、微服务、单体等架构模式"
-          - technology_stack: "分析主要技术栈和框架"
-          - testing_patterns: "识别测试策略和覆盖度"
-          - deployment_patterns: "分析部署和CI/CD模式"
-          - security_patterns: "识别安全相关配置和实践"
-
-      # 工作流模式学习
-      workflow_pattern_learning:
-        enabled: true
-        learning_sources:
-          - existing_workflows: "扫描现有工作流文件"
-          - git_history: "分析提交模式和分支策略"
-          - issue_patterns: "学习问题处理模式"
-          - pr_patterns: "分析代码审查习惯"
-
-    pattern_recognition:
-      # 技术栈模式识别
-      tech_stack_patterns:
-        java_spring:
-          indicators: ["pom.xml", "spring-boot", "maven"]
-          typical_workflows: ["tdd_junit", "spring_security_audit", "maven_deployment"]
-          constraints: ["no_compile_in_test", "spring_profile_aware"]
-
-        node_express:
-          indicators: ["package.json", "express", "npm"]
-          typical_workflows: ["jest_testing", "npm_security_audit", "docker_deployment"]
-          constraints: ["node_modules_ignore", "env_config_required"]
-
-        python_django:
-          indicators: ["requirements.txt", "django", "pip"]
-          typical_workflows: ["pytest_coverage", "django_migrations", "gunicorn_deployment"]
-          constraints: ["virtual_env_required", "settings_security"]
-
-      # 团队协作模式识别
-      collaboration_patterns:
-        git_flow:
-          indicators: ["develop", "release/", "hotfix/"]
-          suggested_workflows: ["feature_branch_workflow", "release_management"]
-
-        github_flow:
-          indicators: ["main", "short_lived_branches"]
-          suggested_workflows: ["continuous_deployment", "automated_testing"]
-
-        trunk_based:
-          indicators: ["main", "feature_flags"]
-          suggested_workflows: ["continuous_integration", "feature_toggle_management"]
-
-  # 🔍 通用代码感知分析引擎 - 新增
-  universal_code_awareness_engine:
-    adaptive_analysis:
-      context_driven_scanning: "根据工作流上下文调整扫描深度"
-      business_semantic_extraction: "通用业务语义提取"
-      entity_relationship_discovery: "自动发现实体关系"
-      cross_language_support: "支持多编程语言"
-
-    analysis_capabilities:
-      business_entity_identification: true
-      dependency_impact_analysis: true
-      modification_complexity_assessment: true
-      semantic_clustering: true
-      chinese_annotation_support: true
-
-    integration_patterns:
-      code_first_workflow_support: "支持代码优先工作流"
-      interactive_questioning_enhancement: "增强交互式问题生成"
-      business_technical_bridge: "业务技术桥接能力"
-
-  # 🎯 能力匹配和缺口分析引擎
-  capability_assessment_engine:
-    # PocketFlow现有能力盘点
-    current_capabilities_inventory:
-      plugins_analysis:
-        - scan_existing_plugins: true
-        - assess_plugin_coverage: true
-        - identify_plugin_dependencies: true
-
-      agents_analysis:
-        - evaluate_agent_capabilities: true
-        - assess_collaboration_patterns: true
-        - identify_skill_gaps: true
-
-      templates_analysis:
-        - catalog_existing_templates: true
-        - assess_template_quality: true
-        - identify_reusable_patterns: true
-
-    # 需求与能力匹配
-    requirement_capability_matching:
-      matching_algorithm: "semantic_similarity + rule_based"
-
-      matching_criteria:
-        functional_match:
-          weight: 0.4
-          factors: ["input_compatibility", "output_alignment", "process_similarity"]
-
-        technical_match:
-          weight: 0.3
-          factors: ["tech_stack_support", "tool_compatibility", "integration_ease"]
-
-        quality_match:
-          weight: 0.2
-          factors: ["quality_standards", "testing_coverage", "security_compliance"]
-
-        context_match:
-          weight: 0.1
-          factors: ["team_size_fit", "complexity_alignment", "timeline_realistic"]
-
-    # 能力缺口识别和扩展
-    capability_gap_analysis:
-      gap_detection:
-        method: "requirement_coverage_analysis"
-        threshold: 0.7  # 覆盖度低于70%认为存在缺口
-
-      gap_categories:
-        missing_plugins:
-          detection: "required_domain_not_covered"
-          solution: "generate_custom_plugin"
-
-        insufficient_agents:
-          detection: "required_expertise_not_available"
-          solution: "create_specialized_agent"
-
-        missing_templates:
-          detection: "workflow_pattern_not_supported"
-          solution: "generate_custom_template"
-
-        integration_gaps:
-          detection: "tool_chain_incomplete"
-          solution: "create_integration_bridge"
-
-    # 自动能力扩展
-    automatic_capability_extension:
-      enabled: true
-      extension_strategies:
-        - plugin_generation: "基于需求自动生成领域插件"
-        - agent_specialization: "创建专门的代理角色"
-        - template_synthesis: "合成新的工作流模板"
-        - integration_creation: "建立工具集成桥梁"
-
-  # 🏗️ PocketFlow 3.0 架构引擎
-  pocketflow_architecture_engine:
-    # 架构目录映射
-    architecture_directory_mapping:
-      plugins_system:
-        path: "../../_shared/plugins/"
-        purpose: "5个领域特定知识包"
-        # 组件和模板位置采用动态发现模式
-        discovery_mode:
-          components_pattern: "../../_shared/plugins/*-domain/"
-          templates_pattern: "../../_shared/plugins/*-domain/templates/"
-          auto_scan: true
-          validation: "verify_directory_exists"
-
-      core_system:
-        path: "../../_shared/core/"
-        purpose: "多代理协调引擎和集成系统"
-
-      constraint_framework:
-        path: "constraint-framework/"
-        purpose: "4层约束继承系统"
-
-      agents_system:
-        path: "agents/"
-        purpose: "8个专门代理角色定义"
-
-      quality_gates:
-        path: "quality-gates/"
-        purpose: "客观90%阈值质量标准"
-
-      workflows:
-        path: "workflows/"
-        purpose: "企业模板和cookbook食谱"
-
-      knowledge:
-        path: "knowledge/"
-        purpose: "技术标准和业务知识"
-
-    # 工作流分解策略
-    workflow_decomposition_strategy:
-      component_identification:
-        - identify_domain_requirements: "识别领域特定需求"
-        - determine_template_needs: "确定模板生成需求"
-        - assess_agent_role_requirements: "评估代理角色需求"
-        - evaluate_quality_gate_needs: "评估质量门禁需求"
-        - analyze_constraint_requirements: "分析约束需求"
-
-    # 文件组织策略
-    file_organization_strategy:
-      template_first_approach: "优先生成模板文件"
-      domain_specific_placement: "按领域特定放置文件"
-      component_separation: "实现配置与实现分离"
-      architecture_compliance: "符合PocketFlow 3.0架构规范"
-
-  # 📄 模板驱动报告生成引擎
-  template_driven_report_engine:
-    # 模板管理策略
-    template_management_strategy:
-      template_selection_logic:
-        requirement_analysis_workflow: "prd-requirement-analysis-report-template.mdc"
-        technical_design_workflow: "technical-design-report-template.mdc"
-        quality_assessment_workflow: "quality-assessment-report-template.mdc"
-        security_audit_workflow: "security-audit-report-template.mdc"
-        performance_optimization_workflow: "performance-optimization-report-template.mdc"
-
-    # 报告生成流水线
-    report_generation_pipeline:
-      template_loading: "从domain-specific templates目录加载模板"
-      variable_mapping: "映射分析结果到模板变量"
-      template_rendering: "使用Handlebars引擎渲染模板"
-      output_generation: "生成标准化报告文档"
-
-    # 模板引擎配置
-    template_engine_config:
-      engine_type: "handlebars"
-      variable_syntax: "{{variable}}"
-      conditional_syntax: "{{#if condition}}"
-      loop_syntax: "{{#each items}}"
-
-    # 输出标准化
-    output_standardization:
-      consistent_structure: "确保报告结构一致性"
-      variable_validation: "验证模板变量完整性"
-      format_compliance: "确保格式规范遵循"
-
-  # 🌐 行业知识和最佳实践引擎
-  industry_knowledge_engine:
-    knowledge_sources:
-      - industry_standards: "ISO、NIST等标准"
-      - best_practices: "DevOps、敏捷等方法论"
-      - regulatory_requirements: "GDPR、SOX等合规要求"
-      - technology_trends: "当前技术发展趋势"
-
-    industry_classification:
-      method: "multi_signal_detection"
-      signals:
-        - codebase_patterns: "技术栈特征"
-        - compliance_indicators: "合规要求线索"
-        - business_keywords: "业务关键词"
-        - workflow_preferences: "流程偏好"
-
-      categories:
-        fintech:
-          indicators: ["encryption", "audit", "compliance", "security"]
-          requirements: ["sox_compliance", "security_audit", "data_encryption"]
-
-        healthcare:
-          indicators: ["hipaa", "patient", "medical", "phi"]
-          requirements: ["hipaa_compliance", "data_privacy", "audit_trail"]
-
-        ecommerce:
-          indicators: ["payment", "cart", "order", "customer"]
-          requirements: ["pci_compliance", "load_testing", "user_analytics"]
-
-        enterprise_saas:
-          indicators: ["tenant", "subscription", "api", "scale"]
-          requirements: ["multi_tenancy", "api_rate_limiting", "monitoring"]
-
-  # 📚 cookbook级别质量保证模式库 (增强版)
-  cookbook_quality_patterns:
-    # 从intelligent-requirement-analysis-workflow-v3.yaml提炼的严谨性模式
-    iterative_validation_rigor:
-      description: "多轮迭代验证严谨性模式"
-      quality_indicators: ["expert_consensus", "evidence_based_decisions", "risk_mitigation", "feedback_driven_refinement"]
-      automatic_injection_triggers:
-        - "需求分析复杂度 > 0.7"
-        - "涉及业务决策和投资判断"
-        - "需要专家团队协作"
-        - "多轮分析收敛需求"
-      implementation_template:
-        stage_loop_mechanism: "阶段间迭代反馈循环（最多3次循环，每次5轮）"
-        expert_consensus_validation: "专家共识验证机制"
-        convergence_detection: "分析收敛判断"
-        feedback_integration: "反馈驱动的分析精炼"
-      cookbook_source: "intelligent-requirement-analysis-workflow-v3.yaml:stages[2-3]"
-      proven_effectiveness: "高复杂度需求分析场景"
-
-    mandatory_verification_rigor:
-      description: "强制验证约束严谨性模式"
-      quality_indicators: ["no_assumptions", "evidence_required", "blocking_enforcement", "data_state_verification"]
-      automatic_injection_triggers:
-        - "涉及数据状态分析"
-        - "技术方案决策"
-        - "高风险业务场景"
-        - "实体修改操作"
-      implementation_template:
-        blocking_rules: "关键验证未完成时强制阻断"
-        verification_checkpoints: "多级验证检查点"
-        escalation_authority: "权威升级机制"
-        data_state_validation: "现有数据状态强制验证"
-      cookbook_source: "requirement-analysis-constraint-base.yaml:mandatory_data_verification_constraints"
-      proven_effectiveness: "数据敏感决策场景"
-
-    technical_authority_challenge_rigor:
-      description: "技术权威质疑严谨性模式"
-      quality_indicators: ["technical_rigor", "over_engineering_prevention", "evidence_validation", "alternative_consideration"]
-      automatic_injection_triggers:
-        - "技术架构决策"
-        - "实现方案选择"
-        - "成本效益评估"
-        - "数据层设计决策"
-      implementation_template:
-        mandatory_challenges: "强制质疑问题清单"
-        veto_authority: "技术负责人否决权"
-        alternative_evaluation: "替代方案强制评估"
-        blocking_power_on_insufficient_research: "对不充分调研方案的阻断权"
-      cookbook_source: "requirement-analysis-constraint-base.yaml:mandatory_technical_challenges"
-      proven_effectiveness: "技术决策关键场景"
-
-    # 从java-tdd-pipeline-integrated-role-driven.yaml提炼的约束驱动严谨性模式
-    constraint_driven_rigor:
-      description: "约束驱动执行严谨性模式"
-      quality_indicators: ["strict_compliance", "predictable_outcomes", "quality_assurance", "dependency_validation"]
-      automatic_injection_triggers:
-        - "质量关键工作流"
-        - "合规要求场景"
-        - "企业级工作流"
-        - "严格顺序执行需求"
-      implementation_template:
-        strict_sequence: "严格顺序执行"
-        state_lock_enforcement: "状态锁定强制"
-        dependency_validation: "依赖链验证"
-        constraint_framework_integration: "约束框架集成"
-      cookbook_source: "java-tdd-pipeline-integrated-role-driven.yaml:constraint_driven_config"
-      proven_effectiveness: "企业级质量保证场景"
-
-    role_authority_hierarchy_rigor:
-      description: "角色权威层次严谨性模式"
-      quality_indicators: ["clear_accountability", "authority_alignment", "decision_traceability", "autonomous_delegation"]
-      automatic_injection_triggers:
-        - "多角色协作场景"
-        - "需要明确决策权"
-        - "企业级治理需求"
-        - "自主执行模式"
-      implementation_template:
-        authority_levels: "清晰的权威级别定义"
-        escalation_chains: "明确的决策升级链"
-        approval_workflows: "基于权威的审批流程"
-        delegation_model: "自主委派执行机制"
-      cookbook_source: "intelligent-requirement-analysis-workflow-v3.yaml:role_delegation_mechanism"
-      proven_effectiveness: "多专家协作场景"
-
-    modular_architecture_rigor:
-      description: "模块化架构严谨性模式"
-      quality_indicators: ["high_maintainability", "clear_separation", "reusable_components", "external_references"]
-      automatic_injection_triggers:
-        - "工作流复杂度 > 500行"
-        - "包含可复用逻辑块"
-        - "企业级维护需求"
-        - "插件域分离需求"
-      implementation_template:
-        engine_extraction: "复杂逻辑引擎化"
-        template_separation: "输出模板分离"
-        constraint_centralization: "约束规则集中化"
-        external_component_references: "外部组件引用"
-      cookbook_source: "intelligent-requirement-analysis-workflow-v3.yaml:$ref_patterns"
-      proven_effectiveness: "大型复杂工作流场景"
-
-    # 新增：业务实体感知严谨性模式
-    business_entity_awareness_rigor:
-      description: "业务实体感知和中文标注严谨性模式"
-      quality_indicators: ["entity_discovery", "chinese_annotation", "business_terminology", "technical_abstraction"]
-      automatic_injection_triggers:
-        - "代码分析工作流"
-        - "实体修改需求"
-        - "业务术语转换需求"
-        - "中文标注需求"
-      implementation_template:
-        entity_discovery_engine: "业务实体自动发现"
-        chinese_annotation_support: "中文标注和术语映射"
-        business_terminology_translation: "技术术语业务化转换"
-        context_aware_analysis: "上下文感知分析"
-      cookbook_source: "business-entity-discovery-engine.yaml"
-      proven_effectiveness: "代码业务逻辑分析场景"
-
-    # 新增：自主执行委派严谨性模式
-    autonomous_execution_rigor:
-      description: "角色驱动自主执行委派严谨性模式"
-      quality_indicators: ["minimal_intervention", "expert_delegation", "background_execution", "quality_assurance"]
-      automatic_injection_triggers:
-        - "角色驱动工作流"
-        - "最小用户交互需求"
-        - "专家自主分析需求"
-        - "后台执行需求"
-      implementation_template:
-        delegation_model: "专家角色委派模式"
-        background_execution: "后台自主执行"
-        intervention_points: "关键介入点配置"
-        autonomous_quality_assurance: "自主质量保证机制"
-      cookbook_source: "intelligent-requirement-analysis-workflow-v3.yaml:execution_config"
-      proven_effectiveness: "专业化分工协作场景"
-
-  # 🧠 用户偏好学习引擎 (增强)
-  user_preference_learning:
-    learning_sources:
-      - interaction_history: "用户选择历史"
-      - feedback_patterns: "用户反馈模式"
-      - modification_trends: "工作流修改趋势"
-      - success_metrics: "工作流执行成功率"
-      - best_practices_adoption: "最佳实践模式采用情况"  # 新增
-
-    preference_categories:
-      complexity_preference:
-        simple_lover: "偏好简单直接的流程"
-        detail_oriented: "喜欢详细控制的流程"
-        automation_first: "优先考虑自动化"
-
-      quality_preference:
-        perfectionist: "追求完美质量"
-        pragmatist: "平衡质量和效率"
-        fast_iteration: "快速迭代优先"
-
-      collaboration_preference:
-        team_player: "重视团队协作"
-        solo_contributor: "倾向独立工作"
-        review_focused: "重视代码审查"
-
-    adaptation_mechanism:
-      - weight_adjustment: "基于偏好调整推荐权重"
-      - option_filtering: "过滤不符合偏好的选项"
-      - workflow_customization: "定制化工作流生成"
-
-  # 🔄 cookbook质量自动注入引擎 (核心)
-  cookbook_quality_injection_engine:
-    # 场景识别和模式匹配
-    scenario_pattern_matching:
-      complexity_analysis:
-        high_complexity_indicators: ["multi_stage_analysis", "expert_collaboration", "business_decisions", "iterative_feedback_loops"]
-        triggers_iterative_validation: true
-        auto_inject_patterns: ["iterative_validation_rigor", "expert_consensus_validation", "stage_feedback_loops"]
-        complexity_threshold: 0.7
-
-      data_dependency_analysis:
-        data_critical_indicators: ["database_queries", "data_state_verification", "technical_decisions", "entity_modifications"]
-        triggers_mandatory_verification: true
-        auto_inject_patterns: ["mandatory_verification_rigor", "technical_authority_challenge_rigor", "blocking_constraint_rules"]
-        verification_strictness: "maximum"
-
-      quality_criticality_analysis:
-        quality_critical_indicators: ["enterprise_workflows", "compliance_requirements", "production_systems", "role_driven_execution"]
-        triggers_constraint_driven: true
-        auto_inject_patterns: ["constraint_driven_rigor", "role_authority_hierarchy_rigor", "autonomous_delegation_patterns"]
-        quality_gate_enforcement: true
-
-      maintainability_analysis:
-        complexity_thresholds: ["workflow_size > 500_lines", "reusable_components", "long_term_maintenance", "modular_separation_needed"]
-        triggers_modular_architecture: true
-        auto_inject_patterns: ["modular_architecture_rigor", "external_component_references", "plugin_domain_separation"]
-        architecture_compliance_required: true
-
-    # 自动质量注入决策引擎
-    automatic_injection_decision:
-      decision_algorithm: "multi_criteria_threshold_based"
-
-      injection_rules:
-        # 规则1: 复杂分析场景自动注入迭代验证严谨性
-        rule_iterative_validation:
-          condition: "complexity_score > 0.7 OR business_decision_involved == true OR multi_expert_required == true"
-          action: "inject_iterative_validation_rigor"
-          components: ["stage_loop_mechanism", "expert_consensus_validation", "convergence_detection", "feedback_driven_refinement"]
-          priority: "highest"
-          cookbook_pattern_source: "intelligent-requirement-analysis-workflow-v3.yaml:stages[2-3]"
-
-        # 规则2: 数据依赖场景自动注入强制验证约束
-        rule_mandatory_verification:
-          condition: "data_dependency_detected == true OR technical_decision_critical == true OR entity_modification_required == true"
-          action: "inject_mandatory_verification_rigor"
-          components: ["blocking_rules", "verification_checkpoints", "escalation_authority", "data_state_verification"]
-          priority: "critical"
-          cookbook_pattern_source: "requirement-analysis-constraint-base.yaml:mandatory_data_verification_constraints"
-
-        # 规则3: 技术决策场景自动注入权威质疑机制
-        rule_technical_authority:
-          condition: "architecture_decision == true OR implementation_choice_critical == true OR data_layer_decisions == true"
-          action: "inject_technical_authority_challenge_rigor"
-          components: ["mandatory_challenges", "veto_authority", "alternative_evaluation", "tech_lead_blocking_power"]
-          priority: "high"
-          cookbook_pattern_source: "requirement-analysis-constraint-base.yaml:mandatory_technical_challenges"
-
-        # 规则4: 企业级场景自动注入约束驱动严谨性
-        rule_constraint_driven:
-          condition: "enterprise_workflow == true OR compliance_required == true OR role_driven_execution == true"
-          action: "inject_constraint_driven_rigor"
-          components: ["strict_sequence", "state_lock_enforcement", "dependency_validation", "constraint_framework_integration"]
-          priority: "high"
-          cookbook_pattern_source: "intelligent-requirement-analysis-workflow-v3.yaml:constraint_driven_config"
-
-        # 规则5: 复杂工作流自动进行模块化拆分
-        rule_modular_architecture:
-          condition: "workflow_complexity > 500_lines OR reusable_components_detected == true OR plugin_domain_required == true"
-          action: "inject_modular_architecture_rigor"
-          components: ["engine_extraction", "template_separation", "constraint_centralization", "external_component_references"]
-          priority: "medium"
-          cookbook_pattern_source: "intelligent-requirement-analysis-workflow-v3.yaml:architecture_references"
-
-        # 新增规则6: 自主执行模式注入
-        rule_autonomous_execution:
-          condition: "role_driven_workflow == true OR minimal_user_interaction_required == true"
-          action: "inject_autonomous_execution_rigor"
-          components: ["delegation_model", "background_execution", "intervention_points", "autonomous_quality_assurance"]
-          priority: "medium"
-          cookbook_pattern_source: "intelligent-requirement-analysis-workflow-v3.yaml:execution_config"
-
-        # 新增规则7: 业务实体感知增强
-        rule_business_entity_awareness:
-          condition: "code_analysis_required == true OR entity_modification_involved == true"
-          action: "inject_business_entity_awareness_rigor"
-          components: ["entity_discovery_engine", "chinese_annotation_support", "business_terminology_translation"]
-          priority: "medium"
-          cookbook_pattern_source: "business-entity-discovery-engine.yaml"
-
-    # cookbook级别质量保证机制
-    cookbook_quality_assurance:
-      quality_validation_checks:
-        iterative_mechanism_validation: "验证是否正确配置了多轮迭代机制和反馈循环"
-        verification_constraint_validation: "验证是否包含必要的强制验证约束和阻断规则"
-        authority_hierarchy_validation: "验证角色权威层次和决策权限是否清晰合理"
-        modular_separation_validation: "验证组件分离和外部引用是否符合cookbook标准"
-        autonomous_execution_validation: "验证自主执行模式和委派机制配置"
-        business_entity_awareness_validation: "验证业务实体感知和中文标注能力"
-        constraint_framework_integration_validation: "验证约束框架集成的完整性"
-        # 新增：资源依赖验证
-        resource_dependency_validation: "验证所有外部资源引用的可用性和准确性"
-        template_reference_validation: "验证模板引用的存在性和路径正确性"
-        tool_assumption_validation: "验证工作流不包含未验证的工具假设"
-
-      comprehensive_quality_dimensions:
-        cookbook_fidelity:
-          weight: 0.25
-          validation_points:
-            - "迭代反馈循环机制完整性"
-            - "强制验证约束的严谨性"
-            - "技术权威质疑机制的有效性"
-            - "角色驱动自主执行的准确性"
-
-        architectural_rigor:
-          weight: 0.25
-          validation_points:
-            - "模块化分离符合PocketFlow3.0架构"
-            - "外部组件引用的正确性"
-            - "约束框架集成的完整性"
-            - "插件域分离的合理性"
-
-        execution_sophistication:
-          weight: 0.2
-          validation_points:
-            - "多专家协作机制的完备性"
-            - "自主执行与介入点的平衡"
-            - "质量门禁的有效性"
-            - "迭代收敛机制的科学性"
-
-        business_integration:
-          weight: 0.15
-          validation_points:
-            - "业务实体感知能力"
-            - "中文标注和术语转换"
-            - "代码与业务逻辑的桥接"
-            - "业务价值导向的分析"
-
-        technical_excellence:
-          weight: 0.15
-          validation_points:
-            - "技术决策验证机制"
-            - "数据状态验证的强制性"
-            - "实现可行性评估的准确性"
-            - "风险识别和缓解策略"
-
-      cookbook_benchmark_comparison:
-        reference_workflows: [
-          "intelligent-requirement-analysis-workflow-v3.yaml",
-          "java-tdd-pipeline-integrated-role-driven.yaml"
-        ]
-        similarity_threshold: 0.88     # 提高相似度要求
-        quality_gate: "generated_workflow_quality >= cookbook_benchmark_quality"
-
-        # 新增：资源可用性对比
-        resource_availability_comparison:
-          template_usage_pattern_match: "确保模板使用模式与cookbook一致"
-          tool_usage_pattern_match: "确保工具使用模式与cookbook一致"
-          external_dependency_pattern_match: "确保外部依赖模式与cookbook一致"
-
-        specific_pattern_matching:
-          stage_feedback_loops:
-            source: "intelligent-requirement-analysis-workflow-v3.yaml:stages[2-3]"
-            pattern: "iterative_deep_analysis + expert_consensus_validation"
-            match_requirement: "must_include_feedback_mechanism"
-
-          mandatory_verification:
-            source: "requirement-analysis-constraint-base.yaml"
-            pattern: "blocking_rules + escalation_authority"
-            match_requirement: "must_include_blocking_constraints"
-
-          role_driven_execution:
-            source: "intelligent-requirement-analysis-workflow-v3.yaml:execution_config"
-            pattern: "autonomous_delegation + minimal_intervention"
-            match_requirement: "must_include_delegation_model"
-
-          business_entity_integration:
-            source: "business-entity-discovery-engine.yaml"
-            pattern: "entity_discovery + chinese_annotation"
-            match_requirement: "must_include_entity_awareness"
-
-  # 🧠 上下文累积引擎 (新增)
-  context_accumulation_engine:
-    accumulation_strategy: "persistent_cross_iteration"
-
-    # 状态保持机制
-    state_persistence:
-      choice_history: "用户历史选择记录"
-      analysis_evolution: "分析结果演进轨迹"
-      confidence_progression: "置信度变化趋势"
-      risk_discovery: "风险发现和演进过程"
-
-    # 上下文管理
-    context_management:
-      context_layers:
-        - immediate_context: "当前迭代的上下文"
-        - session_context: "整个会话的累积上下文"
-        - historical_context: "历史使用模式上下文"
-
-      context_weighting:
-        recent_choices: 0.6      # 最近选择权重较高
-        historical_patterns: 0.3  # 历史模式权重中等
-        domain_knowledge: 0.1     # 领域知识权重较低
-
-    # 依赖关系跟踪
-    dependency_tracking:
-      choice_dependencies: "跟踪选择之间的依赖关系"
-      constraint_propagation: "约束条件的传播和继承"
-      consistency_maintenance: "保持跨迭代的一致性"
-
-  # 🔍 通用抽象层次控制引擎 - 简化版
-  abstraction_control_engine:
-    abstraction_strategy: "context_aware_adaptive"
-
-    # 通用抽象层次框架
-    abstraction_framework:
-      business_strategic: "业务战略层次，关注商业目标和价值"
-      organizational: "组织层次，关注流程和人员影响"
-      project_management: "项目管理层次，关注实施策略和交付"
-      technical_implementation: "技术实现层次，关注具体技术方案"
-
-    # 通用术语处理机制
-    terminology_processing:
-      filter_strategy: "context_adaptive"
-      auto_detection: true
-      business_language_preference: true
-      ambiguity_resolution: true
-
-  # 💻 代码影响分析引擎 (新增重要组件)
-  code_impact_analysis_engine:
-    analysis_strategy: "deep_codebase_dependency_analysis"
-
-    # 关联逻辑分析引擎
-    related_logic_analyzer:
-      analysis_scope:
-        - direct_dependencies: "直接依赖的代码逻辑"
-        - indirect_dependencies: "间接影响的代码逻辑"
-        - cross_module_impacts: "跨模块影响分析"
-        - upstream_downstream: "上下游调用链分析"
-
-      detection_methods:
-        static_analysis:
-          - function_call_graph: "函数调用关系图分析"
-          - class_dependency_graph: "类依赖关系图分析"
-          - package_import_analysis: "包导入关系分析"
-          - interface_implementation_tracking: "接口实现追踪"
-
-        dynamic_analysis:
-          - runtime_dependency_tracking: "运行时依赖追踪"
-          - data_flow_analysis: "数据流向分析"
-          - event_propagation_analysis: "事件传播分析"
-
-        business_logic_analysis:
-          - workflow_impact_mapping: "业务流程影响映射"
-          - feature_coupling_analysis: "功能耦合度分析"
-          - business_rule_dependency: "业务规则依赖分析"
-
-    # 实体关系支撑能力评估引擎
-    entity_relationship_analyzer:
-      assessment_dimensions:
-        database_schema_analysis:
-          - table_structure_compatibility: "表结构兼容性分析"
-          - foreign_key_constraints: "外键约束影响分析"
-          - index_performance_impact: "索引性能影响分析"
-          - data_migration_complexity: "数据迁移复杂度评估"
-
-        domain_model_analysis:
-          - entity_relationship_gaps: "实体关系缺口分析"
-          - aggregate_boundary_impact: "聚合边界影响分析"
-          - business_invariant_validation: "业务不变性验证"
-          - domain_service_coupling: "领域服务耦合分析"
-
-        api_contract_analysis:
-          - interface_backward_compatibility: "接口向后兼容性"
-          - data_transfer_object_changes: "DTO变更影响分析"
-          - contract_versioning_requirements: "合约版本管理需求"
-
-      capability_assessment:
-        current_support_level: "当前支撑能力等级评估"
-        required_modifications: "所需修改列表"
-        migration_complexity: "迁移复杂度评级"
-        backward_compatibility_risk: "向后兼容性风险等级"
-
-    # 功能影响面分析引擎
-    functional_impact_analyzer:
-      impact_scope_analysis:
-        core_functionality:
-          - primary_business_functions: "核心业务功能影响"
-          - critical_user_journeys: "关键用户流程影响"
-          - revenue_generating_features: "营收相关功能影响"
-
-        supporting_functionality:
-          - authentication_authorization: "认证授权功能影响"
-          - logging_monitoring: "日志监控功能影响"
-          - reporting_analytics: "报告分析功能影响"
-          - notification_systems: "通知系统影响"
-
-        integration_points:
-          - external_api_integrations: "外部API集成点影响"
-          - third_party_services: "第三方服务集成影响"
-          - internal_service_communications: "内部服务通信影响"
-
-      impact_severity_assessment:
-        breaking_changes: "破坏性变更识别"
-        performance_degradation_risk: "性能退化风险评估"
-        data_consistency_impact: "数据一致性影响评估"
-        user_experience_disruption: "用户体验中断风险"
-
-    # 代码修改建议生成引擎
-    code_modification_advisor:
-      modification_strategies:
-        incremental_approach: "渐进式修改策略"
-        feature_flag_strategy: "特性开关策略"
-        backward_compatible_design: "向后兼容设计"
-        database_migration_plan: "数据库迁移计划"
-
-      risk_mitigation_recommendations:
-        testing_strategy: "测试策略建议"
-        rollback_plan: "回滚计划建议"
-        monitoring_enhancement: "监控增强建议"
-        performance_validation: "性能验证建议"
-
-  # ⚠️ 风险暴露引擎 (增强)
-  risk_exposure_engine:
-    exposure_strategy: "proactive_comprehensive"
-
-    # 风险识别维度
-    risk_dimensions:
-      technical_risks:
-        - complexity_explosion: "复杂度爆炸风险"
-        - integration_conflicts: "集成冲突风险"
-        - performance_degradation: "性能退化风险"
-        - security_vulnerabilities: "安全漏洞风险"
-
-      business_risks:
-        - scope_creep: "需求蔓延风险"
-        - timeline_impact: "时间线影响风险"
-        - resource_constraints: "资源约束风险"
-        - stakeholder_alignment: "干系人对齐风险"
-
-      operational_risks:
-        - deployment_complexity: "部署复杂性风险"
-        - maintenance_burden: "维护负担风险"
-        - team_knowledge_gaps: "团队知识缺口风险"
-        - third_party_dependencies: "第三方依赖风险"
-
-      # 新增：业务术语歧义风险
-      terminology_risks:
-        - ambiguous_business_terms: "模糊业务术语风险"
-        - technical_misinterpretation: "技术误解风险"
-        - stakeholder_miscommunication: "干系人沟通误解风险"
-        - context_loss_risk: "业务上下文丢失风险"
-        - prd_guidance_inadequacy: "PRD指导不充分风险"
-
-      # 新增：多轮确认和理解验证风险
-      understanding_validation_risks:
-        - single_round_confirmation_inadequacy: "单轮确认不充分风险"
-        - user_answer_misinterpretation: "用户回答误解风险"
-        - incomplete_clarification_risk: "澄清不完整风险"
-        - context_evolution_inconsistency: "上下文演进不一致风险"
-        - final_output_disconnect: "最终输出与理解脱节风险"
-
-      # 新增：代码影响风险 (重要增强)
-      code_impact_risks:
-        - related_logic_complexity: "关联逻辑复杂度风险"
-        - entity_relationship_gaps: "实体关系支撑能力缺口风险"
-        - functional_boundary_impact: "功能边界影响范围风险"
-        - cross_module_dependency: "跨模块依赖复杂度风险"
-        - data_migration_complexity: "数据迁移复杂度风险"
-        - backward_compatibility_risk: "向后兼容性破坏风险"
-        - api_contract_breaking_changes: "API合约破坏性变更风险"
-        - performance_degradation_impact: "性能退化影响风险"
-        - testing_coverage_inadequacy: "测试覆盖不足风险"
-        - rollback_strategy_absence: "回滚策略缺失风险"
-
-    # 风险暴露策略 (增强)
-    exposure_strategies:
-      early_warning: "在选择过程中主动暴露潜在风险"
-      impact_assessment: "评估风险对项目的潜在影响"
-      mitigation_suggestion: "提供风险缓解建议和选项"
-      terminology_clarification: "主动识别并澄清模糊术语"
-      # 新增：代码影响导向的风险暴露策略
-      code_impact_analysis: "深度分析代码关联逻辑影响"
-      entity_relationship_assessment: "评估实体关系支撑能力"
-      functional_boundary_identification: "识别功能边界影响范围"
-      technical_feasibility_validation: "验证技术可行性和实现复杂度"
-      implementation_strategy_guidance: "提供实现策略和修改建议"
-
-    # 风险评分机制 (增强)
-    risk_scoring:
-      probability_assessment: "风险发生概率评估"
-      impact_severity: "风险影响严重性评估"
-      mitigation_difficulty: "风险缓解难度评估"
-      overall_risk_score: "综合风险评分"
-      terminology_ambiguity_score: "术语歧义风险评分"
-      # 新增：代码影响相关评分
-      code_complexity_score: "代码复杂度风险评分"
-      entity_relationship_risk_score: "实体关系风险评分"
-      functional_impact_severity_score: "功能影响严重性评分"
-      implementation_feasibility_score: "实现可行性评分"
-      backward_compatibility_risk_score: "向后兼容性风险评分"
-
-# 🔄 系统架构师主导的智能生成流程
+  # 核心依赖
+  pocketflow_framework:
+    path: "pocketflow/__init__.py"
+    description: "PocketFlow 核心框架"
+    required: true
+
+  cookbook_directory:
+    path: "cookbook/"
+    description: "Cookbook 示例目录"
+    required: true
+    scan_pattern: "cookbook/pocketflow-*/"
+
+  # 可选依赖
+  project_docs:
+    path: "docs/"
+    description: "项目文档"
+    required: false
+
+  project_tests:
+    path: "tests/"
+    description: "测试用例"
+    required: false
+
+# ========================================
+# 工作流阶段
+# ========================================
 stages:
-  # 阶段-1：AI项目规范感知（新增优先阶段）
-  - id: ai-project-standards-discovery
-    title: "AI驱动的项目规范发现"
-    workflow_owner: "system_architect"
-    delegated_execution:
-      primary_executor: "system_architect"
-      execution_mode: "autonomous"
-    depends_on: []
-    priority: "highest"  # 最高优先级，必须最先执行
-
+  # 阶段1: 需求分析
+  - id: requirement_analysis
+    title: "需求分析与意图识别"
+    description: "从用户描述中提取应用类型、核心功能、输入输出等信息"
     tasks:
-      # AI项目规范推断
-      - constraint_task: "ai_project_standards_inference"
-        rule: "利用AI能力自动推断项目核心规范"
-        tool: "Task"  # 使用Task工具调用AI分析
-        responsible_agent: "system_architect"
-        ai_analysis_config:
-          analysis_agent: "general-purpose"
-          analysis_prompt: "${ai_driven_project_standards_engine.ai_standards_inference.semantic_analysis.analysis_prompt_template}"
-          sample_collection: "${ai_driven_project_standards_engine.ai_standards_inference.intelligent_sampling}"
-          project_scanning:
-            scan_targets:
-              - "../**/*.{java,js,py,ts,php}"
-              - "../**/package.json"
-              - "../**/pom.xml"
-              - "../**/requirements.txt"
-              - "../**/composer.json"
-            analysis_depth: "standards_inference"
-            exclude_patterns: ["node_modules", ".git", "target", "build", "vendor", "PocketFlow*"]
-        success_criteria: ["项目规范推断完成", "规范置信度 > 0.7"]
-
-      # 规范画像构建
-      - constraint_task: "standards_profile_construction"
-        rule: "构建项目规范画像和适配策略"
-        tool: "Write"
-        responsible_agent: "system_architect"
-        profile_construction: "${ai_driven_project_standards_engine.standards_profile_construction}"
+      - id: extract_requirements
+        description: "提取用户需求的关键信息"
+        actions:
+          - analyze_user_input
+          - identify_app_type  # Agent/Workflow/RAG/Batch 等
+          - extract_core_features
+          - identify_special_requirements  # 异步/批处理等
         outputs:
-          project_standards_profile: "${ANALYSIS_CACHE}/project-standards-profile.json"
-          team_onboarding_guide: "${ANALYSIS_CACHE}/project-standards-guide.md"
-        success_criteria: ["规范画像构建完成", "适配策略制定完成"]
+          - requirement_summary
 
-      # 工作流生成器配置调整
-      - constraint_task: "workflow_generator_configuration_adaptation"
-        rule: "基于项目规范调整工作流生成配置"
-        tool: "Edit"
-        responsible_agent: "system_architect"
-        adaptation_targets:
-          constraint_rules: "调整约束规则匹配项目标准"
-          template_selection: "配置模板选择偏好"
-          domain_classification: "增强领域分类准确性"
-          code_generation_rules: "设置代码生成规范"
-        adaptation_strategy: "${ai_driven_project_standards_engine.standards_application_strategy}"
-        success_criteria: ["配置调整完成", "规范适配生效"]
-
-    outputs: [
-      "${ANALYSIS_CACHE}/project-standards-profile.json",
-      "${ANALYSIS_CACHE}/project-standards-guide.md",
-      "${ANALYSIS_CACHE}/workflow-generator-adaptation.json"
-    ]
-
-  # 阶段0：资源发现和验证（新增关键阶段）
-  - id: resource-discovery-and-validation
-    title: "资源发现和验证"
-    workflow_owner: "system_architect"
-    delegated_execution:
-      primary_executor: "system_architect"
-      execution_mode: "autonomous"
-    depends_on: ["ai-project-standards-discovery"]
-    priority: "critical"  # 最高优先级，必须先执行
-
+  # 阶段2: Cookbook 扫描
+  - id: cookbook_scanning
+    title: "扫描 Cookbook 示例"
+    description: "扫描 cookbook/ 目录,找到相似的参考示例"
+    depends_on: [requirement_analysis]
     tasks:
-      # 扫描可用模板资源
-      - constraint_task: "scan_available_templates"
-        rule: "扫描并验证所有可用的模板文件"
-        tool: "LS"  # 使用LS工具列出目录内容
-        responsible_agent: "system_architect"
-        # 🔒 强制验证约束 - 防止AI随意发挥
-        mandatory_constraints:
-          - constraint_type: "RESOURCE_VALIDATION"
-            rule: "必须实际扫描目录，不得假设模板存在"
-            enforcement: "BLOCKING"
-            validation_method: "ACTUAL_DIRECTORY_SCAN"
-            failure_action: "ABORT_WITH_DIRECTORY_SCAN_REPORT"
-
-          - constraint_type: "TEMPLATE_EXISTENCE_CHECK"
-            rule: "必须验证每个发现的模板文件可读性"
-            enforcement: "MANDATORY"
-            validation_method: "FILE_READABILITY_TEST"
-            failure_action: "EXCLUDE_UNREADABLE_TEMPLATES"
-
-          - constraint_type: "NO_FICTIONAL_TEMPLATES"
-            rule: "禁止在扫描结果中添加虚构的模板"
-            enforcement: "STRICT_BLOCKING"
-            detection_method: "CROSS_REFERENCE_ACTUAL_FILES"
-            violation_action: "ABORT_GENERATION"
-        scan_config:
-          # 使用通配符动态扫描所有插件的模板目录
-          directories_to_scan: [
-            "../../_shared/plugins/*/templates/"
-          ]
-          scan_pattern: "**/*.{mdc,yaml,yml,md}"
+      - id: scan_cookbook
+        description: "列出所有 cookbook 示例"
+        tools: ["Bash", "Glob"]
+        actions:
+          - command: "ls -la cookbook/"
+          - pattern: "cookbook/pocketflow-*/"
         outputs:
-          available_templates_catalog: "${ANALYSIS_CACHE}/available-templates.json"
-          template_capabilities_mapping: "${ANALYSIS_CACHE}/template-capabilities.json"
-        success_criteria: ["可用模板扫描完成", "模板能力映射建立"]
+          - cookbook_list
 
-      # 验证插件能力
-      - constraint_task: "validate_plugin_capabilities"
-        rule: "读取并验证所有插件的实际能力"
-        tool: "Read"  # 使用Read工具读取插件定义
-        responsible_agent: "system_architect"
-        # 使用通配符动态验证所有插件
-        validation_targets_pattern: "../../_shared/plugins/*/plugin.yaml"
-        validation_mode: "auto_discover_and_validate"
+      - id: match_examples
+        description: "根据应用类型匹配相关示例"
+        matching_rules:
+          Agent: ["pocketflow-agent", "pocketflow-supervisor", "pocketflow-multi-agent"]
+          Workflow: ["pocketflow-workflow", "pocketflow-hello-world"]
+          RAG: ["pocketflow-rag"]
+          Batch: ["pocketflow-batch", "pocketflow-batch-node", "pocketflow-batch-flow"]
+          Async: ["pocketflow-async-basic"]
+          MapReduce: ["pocketflow-map-reduce"]
         outputs:
-          validated_plugin_capabilities: "${ANALYSIS_CACHE}/validated-plugin-capabilities.json"
-          plugin_dependency_matrix: "${ANALYSIS_CACHE}/plugin-dependencies.json"
-        success_criteria: ["插件能力验证完成", "依赖关系明确"]
+          - matched_examples  # 1-3个最相关的示例
 
-      # 动态MCP工具发现和验证
-      - constraint_task: "discover_and_verify_mcp_tools"
-        rule: "动态扫描integrations目录，发现并验证可用的MCP工具能力"
-        tool: "Read"  # 使用Read工具读取integrations文档
-        responsible_agent: "system_architect"
-        discovery_strategy:
-          integrations_directory: "../../_shared/core/integrations/"
-          parse_task_master_capabilities: true
-          parse_xmind_capabilities: true
-          parse_workflow_parser_capabilities: true
-          builtin_tools_priority: true
-          fallback_mapping_required: true
-        tool_discovery_process:
-          step1_scan_directory: "扫描../../_shared/core/integrations/目录"
-          step2_parse_documents: "解析.md文档中的工具定义"
-          step3_extract_capabilities: "提取智能体权限和工具映射"
-          step4_build_tool_matrix: "构建工具可用性矩阵"
-          step5_create_fallback_mapping: "创建内置工具回退映射"
+  # 阶段3: 示例分析
+  - id: example_analysis
+    title: "分析参考示例"
+    description: "深入分析参考示例的代码结构和设计模式"
+    depends_on: [cookbook_scanning]
+    tasks:
+      - id: read_example_code
+        description: "读取示例的 README.md 和 main.py"
+        tools: ["Read"]
+        actions:
+          - read_readme
+          - read_main_py
+          - read_nodes_py  # 如果存在
+          - read_utils  # 如果存在
         outputs:
-          discovered_mcp_capabilities: "${ANALYSIS_CACHE}/discovered-mcp-capabilities.json"
-          tool_agent_matrix: "${ANALYSIS_CACHE}/tool-agent-matrix.json"
-          tool_fallback_mapping: "${ANALYSIS_CACHE}/tool-fallback-mapping.json"
-        success_criteria: ["MCP工具发现完成", "工具能力矩阵建立", "回退策略建立"]
+          - example_code_structure
 
-    outputs: [
-      "${ANALYSIS_CACHE}/resource-validation-report.json",
-      "${ANALYSIS_CACHE}/available-resources-catalog.json"
-    ]
+      - id: extract_patterns
+        description: "提取设计模式"
+        analysis_targets:
+          - node_design_pattern  # 节点设计
+          - flow_connection_pattern  # Flow 连接
+          - shared_store_pattern  # 数据传递
+          - utils_organization  # 工具函数组织
+          - error_handling_pattern  # 错误处理
+          - special_patterns  # Batch/Async 等特殊模式
+        outputs:
+          - design_patterns
 
-  # 阶段1：系统架构师委派：全面需求和上下文分析
-  - id: comprehensive-requirement-and-context-analysis
-    title: "全面需求和上下文分析"
-    workflow_owner: "system_architect"  # 系统架构师作为委派者
-    delegated_execution:
-      primary_executor: "system_architect"  # 主要执行者也是架构师
-      supporting_roles: ["business_analyst", "tech_lead"]  # 支持角色
-      execution_mode: "autonomous"  # 自主执行，无需用户介入
-    depends_on: ["ai-project-standards-discovery", "resource-discovery-and-validation"]  # 依赖项目规范感知和资源验证
-    priority: "highest"
-
+  # 阶段4: 架构设计
+  - id: architecture_design
+    title: "设计应用架构"
+    description: "基于需求和参考示例,设计新应用的架构"
+    depends_on: [requirement_analysis, example_analysis]
     tasks:
-      # 系统架构师主导：规范感知的语义理解分析
-      - constraint_task: "architect_led_semantic_intent_analysis"
-        rule: "系统架构师主导用户需求的深度理解和技术意图解析，结合项目规范"
-        tool: "Read"  # 使用内置工具进行语义分析
-        responsible_agent: "system_architect"
-        analysis_approach: "architecture_centric_requirement_understanding"
-        analysis_prompt: "${semantic_understanding_engine.analysis_prompts.intent_extraction}"
-        # 新增：项目规范感知增强
-        project_standards_integration:
-          standards_profile_input: "${ANALYSIS_CACHE}/project-standards-profile.json"
-          standards_aware_analysis: true
-          adaptation_considerations:
-            - "结合项目命名规范理解需求"
-            - "基于项目质量标准调整期望"
-            - "考虑项目技术偏好进行解读"
-            - "匹配项目团队协作习惯"
-        architect_focus:
-          - "工作流架构模式需求识别"
-          - "技术栈和集成要求分析"
-          - "质量和性能需求评估"
-          - "可维护性和扩展性要求"
-          - "项目规范一致性要求"  # 新增
-        success_criteria:
-          - "意图置信度 > 0.7"
-          - "架构需求明确"
-          - "技术约束清晰"
-          - "质量标准确定"
-          - "项目规范适配完成"  # 新增
-        failure_action: "REQUEST_TECHNICAL_CLARIFICATION"
+      - id: design_directory_structure
+        description: "设计目录结构"
+        template: |
+          {app_name}/
+          ├── main.py              # 入口点
+          ├── nodes.py             # 节点定义
+          ├── flow.py              # 流程定义(可选)
+          ├── utils/               # 工具函数
+          │   ├── __init__.py
+          │   └── call_llm.py
+          ├── requirements.txt     # 依赖
+          └── README.md            # 使用说明
+        outputs:
+          - directory_structure
 
-      # 系统架构师委派：代码库上下文分析
-      - constraint_task: "architect_delegated_codebase_analysis"
-        rule: "架构师委派技术负责人进行代码库技术架构分析"
-        tool: "Glob"  # 使用内置工具扫描项目结构
-        responsible_agent: "tech_lead"  # 委派给技术负责人
-        delegated_by: "system_architect"
-        scanning_strategy: "${codebase_analysis_engine.scanning_strategies}"
-        analysis_depth: "architecture_focused"
-        delegation_requirements:
-          - "识别现有工作流架构模式"
-          - "评估技术栈兼容性"
-          - "分析集成复杂度"
-          - "评估扩展性和维护性"
-        success_criteria:
-          - "技术栈识别完成"
-          - "架构模式确定"
-          - "技术约束明确"
-          - "集成点识别完成"
-        failure_action: "ESCALATE_TO_ARCHITECT"
+      - id: design_shared_store
+        description: "设计 Shared Store 结构"
+        outputs:
+          - shared_store_schema
 
-      # 系统架构师委派：行业最佳实践匹配
-      - constraint_task: "architect_delegated_industry_practice_matching"
-        rule: "架构师委派业务分析师进行行业最佳实践匹配和合规要求分析"
-        tool: "Read"  # 使用内置工具读取知识库信息
-        responsible_agent: "business_analyst"  # 委派给业务分析师
-        delegated_by: "system_architect"
-        matching_algorithm: "${industry_knowledge_engine.industry_classification}"
-        delegation_requirements:
-          - "识别行业特定的工作流模式"
-          - "确定合规和安全要求"
-          - "评估业务流程复杂度"
-          - "匹配最佳实践模板"
-        success_criteria:
-          - "行业类型识别准确"
-          - "最佳实践建议完整"
-          - "合规要求明确"
-          - "业务模式匹配"
-        failure_action: "ESCALATE_TO_ARCHITECT"
+      - id: design_nodes
+        description: "设计节点列表"
+        for_each_node:
+          - name
+          - type  # Node/BatchNode/AsyncNode
+          - responsibility
+          - prep_logic
+          - exec_logic
+          - post_logic
+        outputs:
+          - nodes_design
 
-      # 系统架构师主导：能力评估和架构决策
-      - constraint_task: "architect_led_capability_assessment_and_decision"
-        rule: "架构师主导PocketFlow能力评估并做出架构扩展决策"
-        tool: "Grep"  # 使用内置工具进行能力匹配分析
-        responsible_agent: "system_architect"
-        assessment_criteria: "${capability_assessment_engine.requirement_capability_matching}"
-        architectural_decision_making:
-          - "评估现有插件域覆盖度"
-          - "决定是否需要新增插件域"
-          - "确定约束框架扩展需求"
-          - "评估角色能力匹配度"
-        success_criteria:
-          - "能力匹配度评估完成"
-          - "架构扩展决策明确"
-          - "技术路径确定"
-          - "资源需求评估完成"
-        failure_action: "REQUEST_EXPERT_CONSULTATION"
+      - id: design_flow
+        description: "设计流程图"
+        format: "Mermaid"
+        outputs:
+          - flow_diagram
 
-    outputs: [
-      "${ANALYSIS_CACHE}/semantic-analysis.json",
-      "${ANALYSIS_CACHE}/codebase-analysis.json",
-      "${ANALYSIS_CACHE}/industry-analysis.json",
-      "${ANALYSIS_CACHE}/capability-assessment.json"
-    ]
-
-  # 阶段2：系统架构师主导：智能能力扩展和架构设计
-  - id: architect-led-capability-extension-and-design
-    title: "架构师主导的能力扩展和架构设计"
-    workflow_owner: "system_architect"  # 系统架构师主导
-    delegated_execution:
-      primary_executor: "system_architect"  # 主要执行者
-      supporting_roles: ["tech_lead", "senior_engineer", "quality_expert"]  # 支持角色
-      execution_mode: "conditional_autonomous"  # 条件自主执行
-    depends_on: ["comprehensive-requirement-and-context-analysis"]
-    condition: "capability_gaps_identified == true OR architecture_extension_required == true"
-
+  # 阶段5: 项目配置推断
+  - id: project_inference
+    title: "推断项目配置"
+    description: "分析当前环境,推断技术配置"
+    depends_on: [architecture_design]
     tasks:
-      # 系统架构师主导：架构扩展决策
-      - constraint_task: "architect_led_architecture_extension_decision"
-        rule: "架构师基于需求分析做出PocketFlow架构扩展决策"
-        tool: "Read"  # 使用内置工具进行研究分析
-        responsible_agent: "system_architect"
-        decision_framework:
-          extension_evaluation_criteria:
-            - "现有插件域覆盖度评估"
-            - "新需求与现有架构的匹配度"
-            - "扩展成本与收益分析"
-            - "架构一致性和维护性考虑"
-          extension_decision_matrix:
-            plugin_domain_extension: "需要新增插件域时的决策逻辑"
-            constraint_framework_extension: "需要扩展约束框架时的决策逻辑"
-            agent_role_extension: "需要新增代理角色时的决策逻辑"
-            integration_extension: "需要新增集成能力时的决策逻辑"
-        success_criteria: ["架构扩展决策完成", "扩展方案明确", "实施计划确定"]
-        failure_action: "USE_EXISTING_ARCHITECTURE"
+      - id: detect_environment
+        description: "检测 Python 环境"
+        tools: ["Bash"]
+        checks:
+          - python_version: "python --version"
+          - virtual_env: "检查 venv/conda"
+          - pocketflow_location: "pip show pocketflow"
+          - llm_provider: "检查环境变量"
+        outputs:
+          - environment_info
 
-      # 系统架构师委派：自定义插件生成
-      - constraint_task: "architect_delegated_custom_plugin_generation"
-        rule: "架构师委派高级工程师基于缺口分析生成所需的领域插件"
-        tool: "Write"  # 使用内置工具生成文件
-        responsible_agent: "senior_engineer"  # 委派给高级工程师
-        delegated_by: "system_architect"
-        condition: "missing_plugins.count > 0"
-        generation_template: "${capability_assessment_engine.automatic_capability_extension}"
-        delegation_requirements:
-          - "遵循PocketFlow3.0插件域架构规范"
-          - "确保插件与现有架构的兼容性"
-          - "实现模块化和可维护性设计"
-          - "提供完整的插件文档和测试"
-        success_criteria: ["自定义插件生成完成", "架构合规性验证通过"]
-        failure_action: "ESCALATE_TO_ARCHITECT"
+      - id: generate_config
+        description: "生成项目配置建议"
+        outputs:
+          - project_config
 
-      # 系统架构师委派：专门代理角色创建
-      - constraint_task: "architect_delegated_specialized_agent_creation"
-        rule: "架构师委派技术负责人创建满足特定需求的专门代理角色"
-        tool: "Write"  # 使用内置工具生成文件
-        responsible_agent: "tech_lead"  # 委派给技术负责人
-        delegated_by: "system_architect"
-        condition: "insufficient_agents.count > 0"
-        delegation_requirements:
-          - "基于现有角色体系设计新角色"
-          - "确保角色权限和职责清晰"
-          - "维护角色协作关系的一致性"
-          - "提供角色能力和交互规范"
-        success_criteria: ["专门代理创建完成", "角色体系一致性保持"]
-        failure_action: "ESCALATE_TO_ARCHITECT"
-
-      # 系统架构师委派：工具集成桥梁构建
-      - constraint_task: "architect_delegated_integration_bridge_creation"
-        rule: "架构师委派技术负责人构建工具链集成桥梁"
-        tool: "Write"  # 使用内置工具生成文件
-        responsible_agent: "tech_lead"  # 委派给技术负责人
-        delegated_by: "system_architect"
-        condition: "integration_gaps.count > 0"
-        delegation_requirements:
-          - "设计符合PocketFlow集成规范的桥梁"
-          - "确保集成的稳定性和可靠性"
-          - "提供完整的集成测试和文档"
-          - "考虑未来扩展和维护需求"
-        success_criteria: ["集成桥梁构建完成", "集成测试通过"]
-        failure_action: "ESCALATE_TO_ARCHITECT"
-
-    outputs: [
-      "${PLM_DIR}/generated/custom-plugins/",
-      "${PLM_DIR}/generated/specialized-agents/",
-      "${PLM_DIR}/generated/integration-bridges/"
-    ]
-
-  # 阶段3：系统架构师主导：工作流架构设计和用户确认
-  - id: architect-led-workflow-architecture-design
-    title: "架构师主导的工作流架构设计"
-    workflow_owner: "system_architect"  # 系统架构师主导
-    delegated_execution:
-      primary_executor: "system_architect"  # 主要执行者
-      supporting_roles: ["business_analyst", "tech_lead", "quality_expert"]  # 支持角色
-      execution_mode: "semi_autonomous"  # 需要用户确认架构决策
-      intervention_point: "architecture_decision_validation"  # 用户介入点：架构决策验证
-    depends_on: ["comprehensive-requirement-and-context-analysis", "architect-led-capability-extension-and-design"]
-    condition: "architecture_design_required == true"
-
-    # 渐进式细化配置
-    refinement_config:
-      iteration_strategy: "${progressive_refinement_engine.refinement_strategy}"
-      max_iterations: "${progressive_refinement_engine.iteration_control.max_iterations}"
-      convergence_threshold: "${progressive_refinement_engine.iteration_control.convergence_criteria}"
-
+  # 阶段6: 代码生成
+  - id: code_generation
+    title: "生成应用代码"
+    description: "生成完整的应用代码文件"
+    depends_on: [architecture_design, project_inference]
     tasks:
-      # 初始化交互式上下文
-      - constraint_task: "initialize_interactive_context"
-        rule: "初始化交互式分析上下文和状态管理"
-        tool: "Write"  # 使用内置工具管理状态
-        initialization_data:
-          - semantic_analysis_results: "${ANALYSIS_CACHE}/semantic-analysis.json"
-          - codebase_context: "${ANALYSIS_CACHE}/codebase-analysis.json"
-          - capability_gaps: "${ANALYSIS_CACHE}/capability-assessment.json"
-        success_criteria: ["上下文初始化完成", "状态管理启动"]
-        failure_action: "USE_NON_INTERACTIVE_MODE"
+      - id: generate_requirements
+        description: "生成 requirements.txt"
+        dependencies:
+          - "pocketflow"
+          - "根据需求添加其他依赖"
+        tools: ["Write"]
+        outputs:
+          - requirements_txt
 
-      # 工作流需求理解和类型识别
-      - constraint_task: "workflow_requirement_understanding"
-        rule: "理解用户的工作流需求并识别工作流类型"
-        tool: "Read"  # 使用内置工具进行需求分析
+      - id: generate_utils
+        description: "生成 utils/*.py"
+        tools: ["Write"]
+        files:
+          - "utils/__init__.py"
+          - "utils/call_llm.py"
+          - "其他工具函数"
+        code_style:
+          - "包含完整 docstring"
+          - "包含 if __name__ == '__main__' 测试"
+          - "不捕获异常"
+        outputs:
+          - utils_files
 
-        understanding_focus:
-          workflow_type_identification: "识别需要生成的工作流类型"
-          complexity_assessment: "评估工作流复杂度"
-          domain_requirements: "确定领域特定需求"
-          architecture_requirements: "评估架构组织需求"
+      - id: generate_nodes
+        description: "生成 nodes.py"
+        tools: ["Write"]
+        node_template: |
+          class {NodeName}(Node):
+              def prep(self, shared):
+                  # 从 shared 读取数据
+                  return data
 
-        success_criteria:
-          - "工作流类型明确"
-          - "复杂度评估完成"
-          - "架构需求识别"
-        failure_action: "USE_GENERAL_WORKFLOW_TEMPLATE"
+              def exec(self, prep_res):
+                  # 执行计算,不访问 shared
+                  return result
 
-      # 最终需求确认和验证
-      - constraint_task: "final_requirement_confirmation"
-        rule: "基于渐进式细化结果确认最终需求"
-        tool: "Read"  # 使用内置工具进行需求分析
-        confirmation_criteria:
-          completeness_threshold: 0.9
-          consistency_threshold: 0.85
-          user_confidence_threshold: 0.8
-        success_criteria:
-          - "需求确认完成"
-          - "一致性验证通过"
-          - "完整性检查通过"
-        failure_action: "REQUEST_ADDITIONAL_CLARIFICATION"
+              def post(self, shared, prep_res, exec_res):
+                  # 写入 shared,返回 action
+                  shared["key"] = exec_res
+                  return "default"
+        outputs:
+          - nodes_py
 
-    outputs: [
-      "${ANALYSIS_CACHE}/refined-requirements.json",
-      "${ANALYSIS_CACHE}/user-interaction-history.json",
-      "${ANALYSIS_CACHE}/risk-analysis-comprehensive.json",
-      "${ANALYSIS_CACHE}/context-evolution-trace.json"
-    ]
+      - id: generate_main
+        description: "生成 main.py"
+        tools: ["Write"]
+        includes:
+          - "import 语句"
+          - "节点定义或引用"
+          - "Flow 构建"
+          - "示例运行代码"
+        outputs:
+          - main_py
 
-  # 阶段4：系统架构师主导：智能工作流合成和cookbook质量注入
-  - id: architect-led-intelligent-workflow-synthesis
-    title: "架构师主导的智能工作流合成"
-    workflow_owner: "system_architect"  # 系统架构师主导
-    delegated_execution:
-      primary_executor: "system_architect"  # 主要执行者
-      supporting_roles: ["tech_lead", "senior_engineer", "quality_expert", "business_analyst"]  # 支持角色
-      execution_mode: "autonomous"  # 自主执行工作流合成
-    depends_on: ["comprehensive-requirement-and-context-analysis", "architect-led-capability-extension-and-design", "architect-led-workflow-architecture-design"]
+      - id: generate_readme
+        description: "生成 README.md"
+        tools: ["Write"]
+        sections:
+          - "项目简介"
+          - "安装步骤"
+          - "快速开始"
+          - "配置说明"
+          - "示例用法"
+          - "架构说明(Mermaid 图)"
+        outputs:
+          - readme_md
 
+  # 阶段7: 质量检查
+  - id: quality_check
+    title: "质量检查"
+    description: "检查生成的代码质量"
+    depends_on: [code_generation]
     tasks:
-      # 系统架构师主导：综合分析结果整合和架构决策
-      - constraint_task: "architect_led_comprehensive_analysis_integration"
-        rule: "架构师整合所有分析结果并做出最终的工作流架构决策"
-        tool: "Read"  # 使用内置工具进行研究分析
-        responsible_agent: "system_architect"
-        integration_approach: "architecture_centric_synthesis"
-        integration_sources: [
-          "semantic_analysis", "codebase_analysis",
-          "industry_analysis", "capability_assessment",
-          "architecture_extension_decisions", "user_architecture_confirmations",
-          "project_standards_profile"  # 新增：项目规范画像
-        ]
-        architectural_synthesis:
-          - "确定工作流的整体架构模式"
-          - "选择合适的主导角色和委派策略"
-          - "设计阶段划分和依赖关系"
-          - "确定质量门禁和约束机制"
-          - "应用项目规范约束和适配策略"  # 新增
-        success_criteria: ["综合需求理解完成", "架构决策明确", "合成策略确定"]
-        failure_action: "REQUEST_ARCHITECTURE_CLARIFICATION"
+      - id: validate_code
+        description: "验证代码规范"
+        checks:
+          - "所有 import 可用"
+          - "Node 遵循 prep-exec-post 模型"
+          - "exec 中不访问 shared"
+          - "BatchNode 的 post 正确处理 exec_res_list"
+          - "AsyncNode 配合 AsyncFlow"
+          - "工具函数包含测试代码"
+          - "README 完整清晰"
+        outputs:
+          - quality_report
 
-      # 系统架构师委派：智能角色选择和架构模式应用
-      - constraint_task: "architect_delegated_intelligent_role_selection"
-        rule: "架构师委派业务分析师进行角色选择，但架构师确定主导角色和委派模式"
-        tool: "Read"  # 使用内置工具进行研究分析
-        responsible_agent: "business_analyst"  # 委派给业务分析师
-        delegated_by: "system_architect"
-        role_selection_approach: "architecture_pattern_first"
-        role_selection_config:
-          selection_engine: "${intelligent_role_selection_engine}"
-          architectural_constraints:
-            - primary_role_determination: "由架构师确定主导角色"
-            - delegation_model_design: "设计符合cookbook模式的委派关系"
-            - authority_hierarchy_establishment: "建立清晰的权威层次"
-            - execution_mode_selection: "选择合适的执行模式"
-          analysis_inputs:
-            - workflow_type: "从语义分析中提取工作流类型"
-            - technical_requirements: "从代码库分析中提取技术需求"
-            - industry_context: "从行业分析中提取领域信息"
-            - complexity_level: "从能力评估中提取复杂度级别"
-            - architecture_decisions: "从架构决策中获取约束条件"
-
-        selection_process:
-          # 步骤1：角色发现和扫描
-          - step: "discover_available_roles"
-            action: "扫描../../_shared/agents/roles/目录获取所有可用角色"
-            output: "available_roles_inventory"
-
-          # 步骤2：工作流类型匹配
-          - step: "workflow_type_matching"
-            action: "基于工作流类型匹配推荐角色组合"
-            matching_rules: "${intelligent_role_selection_engine.role_matching_strategy.workflow_type_mapping}"
-            output: "type_based_role_recommendations"
-
-          # 步骤3：关键词语义匹配
-          - step: "keyword_semantic_matching"
-            action: "基于需求关键词进行语义匹配"
-            matching_rules: "${intelligent_role_selection_engine.role_matching_strategy.keyword_matching_rules}"
-            output: "keyword_based_role_scores"
-
-          # 步骤4：协作关系优化
-          - step: "collaboration_optimization"
-            action: "基于角色协作关系优化角色组合"
-            optimization_rules: "${intelligent_role_selection_engine.role_matching_strategy.collaboration_optimization}"
-            output: "optimized_role_combinations"
-
-          # 步骤5：多准则评分和选择
-          - step: "multi_criteria_scoring"
-            action: "对候选角色进行多准则评分和最终选择"
-            scoring_algorithm: "${intelligent_role_selection_engine.role_selection_algorithm}"
-            output: "final_selected_roles"
-
-        success_criteria:
-          - "角色选择完成"
-          - "选择置信度 > 0.8"
-          - "角色组合协作性验证通过"
-          - "权限覆盖完整性检查通过"
-        failure_action: "USE_DEFAULT_ROLE_COMBINATION"
-
-      # 基于cookbook经验的智能工作流设计
-      - constraint_task: "cookbook_informed_workflow_design"
-        rule: "基于cookbook最佳实践设计高质量的模块化工作流"
-        tool: "Write"  # 使用内置工具生成文件
-        depends_on: ["intelligent_role_selection"]
-        design_principles:
-          - architecture_pattern_application: "应用cookbook验证的架构模式"
-          - modular_component_separation: "实现模块化组件分离"
-          - role_driven_design: "基于角色能力设计任务分配"
-          - pocketflow_compliance: "严格遵循PocketFlow 3.0架构规范"
-
-        # 角色驱动的工作流设计
-        role_driven_design:
-          selected_roles_input: "${final_selected_roles}"
-          role_assignment_strategy: "capability_based_task_allocation"
-          role_collaboration_design:
-            - generate_role_interaction_matrix: "生成角色交互矩阵"
-            - define_handoff_points: "定义角色间的交接点"
-            - establish_approval_chains: "建立审批链"
-            - configure_escalation_paths: "配置升级路径"
-
-        # 基于cookbook经验的架构化工作流生成
-        cookbook_driven_workflow_generation:
-          # 应用cookbook验证的架构模式
-          architecture_pattern_application:
-            modular_separation: "${workflow_architecture_patterns.modular_component_separation}"
-            role_driven_design: "${workflow_architecture_patterns.role_driven_workflow_design}"
-            directory_compliance: "${workflow_architecture_patterns.pocketflow_directory_compliance}"
-
-          # 智能组件提取策略（基于cookbook经验）
-          intelligent_component_extraction:
-            engine_extraction_criteria:
-              - "复杂业务逻辑 > 50行"
-              - "可复用配置块"
-              - "特定领域知识"
-
-            template_extraction_criteria:
-              - "输出文档生成需求"
-              - "报告格式定义"
-              - "标准化输出要求"
-
-            constraint_extraction_criteria:
-              - "业务规则约束"
-              - "质量门禁要求"
-              - "合规性检查"
-
-          stages_design:
-            method: "role_responsibility_mapping + architecture_compliance"
-            principles:
-              - "每个阶段明确负责角色"
-              - "阶段间依赖关系清晰"
-              - "质量门控节点合理设置"
-              - "并行任务优化安排"
-              - "组件拆分符合架构规范"  # 新增
-              - "模板驱动的输出生成"  # 新增
-
-          tasks_allocation:
-            method: "role_capability_matching + component_separation"
-            allocation_rules:
-              - "核心任务分配给primary_role"
-              - "协作任务分配给collaborative_roles"
-              - "审查任务分配给authority_roles"
-              - "质量门控任务分配给quality_roles"
-              - "模板生成任务分配给doc_domain"  # 新增
-              - "约束验证任务分配给constraint_framework"  # 新增
-
-        # 增强：模板驱动的组件生成和架构拆分
-        template_driven_component_generation:
-          # 架构拆分执行
-          architecture_decomposition_execution:
-            engine: "${pocketflow_architecture_engine}"
-            decomposition_strategy: "${pocketflow_architecture_engine.workflow_decomposition_strategy}"
-            file_organization: "${pocketflow_architecture_engine.file_organization_strategy}"
-
-          # 模板驱动报告生成集成
-          template_engine_integration:
-            template_engine: "${template_driven_report_engine}"
-            template_selection: "${template_driven_report_engine.template_management_strategy.template_selection_logic}"
-            report_pipeline: "${template_driven_report_engine.report_generation_pipeline}"
-
-          # 基于验证资源的组件生成规则
-          component_generation_rules:
-            # 主工作流文件生成
-            main_workflow_generation:
-              target_location: "workflows/user-workflows/"
-              resource_validation_required: true
-              tool_mapping_strategy: "use_verified_tools_only"
-              template_reference_strategy: "use_existing_templates_only"
-
-            # 基于实际扫描结果的模板选择
-            template_selection_logic:
-              resource_discovery_input: "${ANALYSIS_CACHE}/available-templates.json"
-              selection_strategy: "match_existing_templates"
-              template_mapping:
-                test_generation_workflow:
-                  - "../../_shared/plugins/doc-domain/templates/common-test-example-gen.mdc"
-                  - "../../_shared/plugins/doc-domain/templates/half-desc-test-example-gen.mdc"
-                requirement_analysis_workflow:
-                  - "../../_shared/plugins/doc-domain/templates/prd-requirement-analysis-report-template.mdc"
-                technical_design_workflow:
-                  - "../../_shared/plugins/doc-domain/templates/prd-analyze-requirement-design.mdc"
-              fallback_strategy: "use_available_or_skip"
-
-            # 角色定义生成
-            agent_roles_generation:
-              condition: "workflow_requires_specialized_agents == true"
-              target_location: "../../_shared/agents/roles/"
-              generation_rule: "基于工作流需求生成或增强现有角色定义"
-              template_base: "agent-role-template.yaml"
-
-            # 质量门禁生成
-            quality_gates_generation:
-              condition: "workflow_has_quality_requirements == true"
-              target_location: "quality-gates/"
-              generation_rule: "为工作流质量要求生成对应的质量门禁"
-              template_base: "quality-gate-template.yaml"
-
-          template_mapping:
-            business_oriented: "${business_oriented_template}"
-            task_master_hosted: "${task_master_config.generated_workflow_defaults}"
-            non_hosted: "${non_hosted_template}"
-          execution_mode: "architecture_aware_intelligent_selection"
-          converter_integration: "conditional"
-          selected_roles_injection: true
-          business_focus_enhancement: "conditional"
-          abstraction_control: "${abstraction_control_engine}"
-
-        # 资源验证集成的工作流生成策略
-        resource_validated_workflow_generation:
-          input_resources:
-            available_templates: "${ANALYSIS_CACHE}/available-templates.json"
-            verified_tools: "${ANALYSIS_CACHE}/tool-availability.json"
-            plugin_capabilities: "${ANALYSIS_CACHE}/validated-plugin-capabilities.json"
-
-          generation_constraints:
-            only_use_verified_tools: true
-            only_reference_existing_templates: true
-            validate_plugin_dependencies: true
-            require_fallback_strategies: true
-
-          tool_mapping_enforcement:
-            code_analysis_tools: ["Read", "Grep", "Glob"]
-            file_operations: ["Write", "Edit", "MultiEdit"]
-            project_scanning: ["LS", "Bash"]
-            data_processing: ["Bash"]
-            forbidden_assumptions: ["mcp/*"]  # 禁止假设MCP工具存在
-
-          # 强制验证规则
-          mandatory_validation_rules:
-            template_existence_check:
-              rule: "生成工作流前必须验证所有引用的模板文件实际存在"
-              validation_method: "scan_template_directories"
-              failure_action: "use_available_or_remove_reference"
-
-            tool_availability_check:
-              rule: "验证MCP工具可用性，优先使用Task-Master和XMind分析工具"
-              validation_method: "check_pocketflow_mcp_capabilities"
-              available_tool_sets: ["task_master_tools", "xmind_analysis_tools"]
-              failure_action: "use_available_mcp_or_builtin_fallback"
-
-              # 工具可用性验证矩阵
-              validation_matrix:
-                task_master_available: true  # PocketFlow 3.0核心MCP工具
-                xmind_analysis_available: true  # 企业级思维导图分析
-                external_mcp_available: false  # 外部未验证的MCP工具
-                builtin_tools_available: true  # 内置工具始终可用
-
-            plugin_capability_validation:
-              rule: "确保引用的插件引擎和组件实际存在且可用"
-              validation_method: "validate_plugin_component_paths"
-              failure_action: "create_placeholder_or_remove"
-
-          # 资源替换策略
-          resource_replacement_strategies:
-            missing_template_handling:
-              strategy: "智能模板替换或创建"
-              replacement_logic:
-                test_case_generation:
-                  primary_template: "../../_shared/plugins/doc-domain/templates/common-test-example-gen.mdc"
-                  fallback_template: "../../_shared/plugins/doc-domain/templates/half-desc-test-example-gen.mdc"
-                  create_if_missing: false
-                requirement_analysis:
-                  primary_template: "../../_shared/plugins/doc-domain/templates/prd-requirement-analysis-report-template.mdc"
-                  fallback_template: "../../_shared/plugins/doc-domain/templates/prd-analyze-requirement-design.mdc"
-                  create_if_missing: false
-
-            unavailable_tool_handling:
-              strategy: "优先使用PocketFlow MCP工具，后备内置工具"
-              replacement_mapping:
-                # 优先级：使用PocketFlow实际MCP工具
-                test_analysis_needs:
-                  primary: ["task_master.coverage_analysis", "task_master.test_strategy_planning"]
-                  fallback: ["Read", "Grep", "Bash"]
-                semantic_analysis_needs:
-                  primary: ["task_master.research", "xmind_analysis.requirements_extraction"]
-                  fallback: ["Read", "Grep"]
-                codebase_analysis_needs:
-                  primary: ["task_master.analyze_project_complexity", "task_master.research"]
-                  fallback: ["Read", "Glob", "Grep"]
-                test_generation_needs:
-                  primary: ["task_master.generate", "task_master.expand_task"]
-                  fallback: ["Write", "MultiEdit"]
-                project_management_needs:
-                  primary: ["task_master.add_task", "task_master.validate_dependencies", "task_master.project_coordination"]
-                  fallback: ["Read", "Write", "Bash"]
-                requirement_analysis_needs:
-                  primary: ["task_master.parse_prd", "xmind_analysis.requirements_extraction", "task_master.requirement_validation"]
-                  fallback: ["Read", "Grep"]
-                architecture_design_needs:
-                  primary: ["task_master.architecture_design", "task_master.technology_selection", "xmind_analysis.architecture_requirements"]
-                  fallback: ["Read", "Write"]
-                security_analysis_needs:
-                  primary: ["task_master.security_audit", "task_master.vulnerability_assessment", "task_master.threat_modeling"]
-                  fallback: ["Read", "Grep"]
-                performance_analysis_needs:
-                  primary: ["task_master.performance_audit", "task_master.bottleneck_analysis"]
-                  fallback: ["Read", "Bash"]
-                quality_validation_needs:
-                  primary: ["task_master.quality_gate_validation", "task_master.validate_dependencies"]
-                  fallback: ["Read", "Write"]
-
-            missing_engine_handling:
-              strategy: "简化逻辑或移除引用"
-              simplification_rules:
-                - "将复杂引擎引用简化为基础任务配置"
-                - "移除不存在的外部组件引用"
-                - "使用内联配置替换外部引擎引用"
-
-        # 业务导向工作流质量保证
-        business_workflow_quality_assurance:
-          enabled: true
-          validation_criteria:
-            business_language_compliance:
-              check: "验证问题生成配置使用业务语言"
-              threshold: 0.9
-              validation_points:
-                - "问题生成原则包含avoid_technical_jargon"
-                - "问题类型设置avoid_technical_details标记"
-                - "上下文配置优先使用business_context"
-                - "抽象层次设置为business相关级别"
-
-            stakeholder_focus_validation:
-              check: "验证工作流关注干系人和业务价值"
-              threshold: 0.85
-              validation_points:
-                - "包含stakeholder_impact_analysis问题类型"
-                - "包含business_value_clarification问题类型"
-                - "配置了target_audience定义"
-                - "包含ROI和业务价值分析任务"
-
-            technical_jargon_detection:
-              check: "检测并标记技术术语使用"
-              threshold: 0.95
-              detection_engine: "${abstraction_control_engine.technical_jargon_filter}"
-              auto_replacement: true
-
-            abstraction_level_consistency:
-              check: "验证抽象层次一致性"
-              threshold: 0.9
-              validation_points:
-                - "所有问题类型具有适当的abstraction_level"
-                - "抽象层次与目标用户群体匹配"
-                - "避免技术实现细节"
-
-        success_criteria:
-          - "工作流设计完成"
-          - "角色分配合理"
-          - "协作关系清晰"
-          - "质量检查通过"
-          - "依赖关系正确"
-          - "Task-Master配置注入完成"
-          - "业务导向质量验证通过"  # 新增
-        failure_action: "USE_TEMPLATE_BASED_DESIGN"
-
-      # 工作流托管需求判断 (新增)
-      - constraint_task: "workflow_hosting_decision"
-        rule: "智能判断生成的工作流是否需要Task-Master托管"
-        tool: "Read"  # 使用内置工具进行分析
-        decision_engine: "${workflow_hosting_decision_engine}"
-        analysis_inputs:
-          - workflow_complexity: "分析工作流执行复杂度"
-          - state_management: "评估状态持久化需求"
-          - constraint_requirements: "分析约束验证需求"
-          - tool_coordination: "评估工具协调复杂度"
-          - file_operations: "分析文件系统操作需求"
-        decision_criteria:
-          scoring_method: "${workflow_hosting_decision_engine.decision_algorithm.scoring_method}"
-          weights: "${workflow_hosting_decision_engine.decision_algorithm.criteria_weights}"
-          thresholds: "${workflow_hosting_decision_engine.decision_algorithm}"
-        success_criteria:
-          - "托管需求判断完成"
-          - "判断置信度 > 0.8"
-        failure_action: "DEFAULT_TO_HOSTING"
-
-      # 条件化Task-Master配置注入 (修改)
-      - constraint_task: "conditional_task_master_config_injection"
-        rule: "根据判断结果条件化注入Task-Master配置"
-        tool: "Edit"  # 使用内置工具编辑配置
-        condition: "hosting_decision_score >= 0.6"
-        config_injection:
-          target_section: "task_master_config"
-          template_source: "${generated_workflow_templates.task_master_hosted_template}"
-          required_fields:
-            - execution_mode: "task-master-driven"
-            - converter_required: true
-            - conversion_command: "python plugins/workflow-domain/converter.py -i {workflow_file} -o {output_file} --agents-mode --validate --pretty"
-        success_criteria:
-          - "Task-Master配置注入完成"
-          - "转换命令配置正确"
-        failure_action: "USE_NON_HOSTED_CONFIG"
-
-      # 非托管配置注入 (新增)
-      - constraint_task: "non_hosted_config_injection"
-        rule: "为不需要托管的工作流注入非托管配置"
-        tool: "Edit"  # 使用内置工具编辑配置
-        condition: "hosting_decision_score <= 0.4"
-        config_injection:
-          target_section: "execution_config"
-          template_source: "${generated_workflow_templates.non_hosted_template}"
-          required_fields:
-            - execution_mode: "ai-tool-native"
-            - direct_execution: true
-            - no_conversion_needed: true
-        success_criteria:
-          - "非托管配置注入完成"
-          - "执行模式配置正确"
-        failure_action: "USE_DEFAULT_CONFIG"
-
-      # 自适应优化
-      - constraint_task: "adaptive_optimization"
-        rule: "基于学习到的偏好和约束进行工作流优化"
-        tool: "MultiEdit"  # 使用内置工具进行多处优化修改
-        optimization_targets:
-          - efficiency: "提高执行效率"
-          - quality: "保证输出质量"
-          - usability: "提升用户体验"
-          - task_master_compatibility: "确保Task-Master兼容性"
-        success_criteria: ["工作流优化完成"]
-        failure_action: "USE_BASIC_WORKFLOW"
-
-    outputs: [
-      "${PLM_DIR}/generated/intelligent-workflow.yaml",
-      "${PLM_DIR}/generated/workflow-analysis-report.md",
-      "${ANALYSIS_CACHE}/selected-roles-analysis.json",
-      "${ANALYSIS_CACHE}/role-collaboration-matrix.json"
-    ]
-
-  # 阶段5：系统架构师主导：工作流部署和质量验证
-  - id: architect-led-deployment-and-quality-validation
-    title: "架构师主导的工作流部署和质量验证"
-    workflow_owner: "system_architect"  # 系统架构师主导
-    delegated_execution:
-      primary_executor: "system_architect"  # 主要执行者
-      supporting_roles: ["tech_lead", "quality_expert"]  # 支持角色
-      execution_mode: "autonomous"  # 自主执行部署
-      final_review_required: true  # 需要最终审核
-    depends_on: ["architect-led-intelligent-workflow-synthesis"]
-
+  # 阶段8: 项目初始化(可选)
+  - id: project_initialization
+    title: "项目初始化"
+    description: "帮助用户初始化项目环境"
+    depends_on: [code_generation, quality_check]
+    optional: true
     tasks:
-      # 系统架构师主导：cookbook质量验证
-      - constraint_task: "architect_led_cookbook_quality_validation"
-        rule: "架构师主导对生成的工作流进行cookbook级别质量验证"
-        tool: "Read"  # 使用内置工具验证文件内容
-        responsible_agent: "system_architect"
-        quality_validation_framework: "${cookbook_quality_injection_engine.cookbook_quality_assurance}"
-        validation_dimensions:
-          - cookbook_fidelity_validation: "验证与cookbook模式的一致性"
-          - architectural_rigor_validation: "验证架构严谨性和合规性"
-          - execution_sophistication_validation: "验证执行机制的复杂性"
-          - business_integration_validation: "验证业务集成能力"
-          - technical_excellence_validation: "验证技术卓越性"
-          - project_standards_compliance_validation: "验证与项目规范的一致性"  # 新增
-        quality_gate_enforcement: true
-        success_criteria: ["cookbook质量验证通过", "质量评分达标", "架构合规确认"]
-        failure_action: "REQUIRE_QUALITY_IMPROVEMENT"
-
-      # 系统架构师委派：工作流部署和结构验证
-      - constraint_task: "architect_delegated_workflow_deployment"
-        rule: "架构师委派技术负责人部署生成的工作流和相关模块"
-        tool: "Write"  # 使用内置工具生成文件
-        responsible_agent: "tech_lead"  # 委派给技术负责人
-        delegated_by: "system_architect"
-        deployment_approach: "pocketflow_architecture_compliant"
-        deployment_targets: ["${OUTPUT_DIR}", "../../_shared/plugins/", "../../_shared/agents/roles/", "constraint-framework/"]
-        deployment_validation:
-          - "验证文件结构符合PocketFlow3.0规范"
-          - "确认外部组件引用的正确性"
-          - "验证角色定义和权限配置"
-          - "检查约束框架集成"
-          - "验证生成代码符合项目规范"  # 新增
-          - "检查命名约定和代码风格一致性"  # 新增
-        success_criteria: ["部署完成", "结构验证通过", "引用关系正确"]
-        failure_action: "ESCALATE_TO_ARCHITECT"
-
-      # 系统架构师委派：质量反馈机制设置
-      - constraint_task: "architect_delegated_quality_feedback_setup"
-        rule: "架构师委派质量专家设置工作流质量反馈收集机制"
-        tool: "Write"  # 使用内置工具创建反馈机制配置
-        responsible_agent: "quality_expert"  # 委派给质量专家
-        delegated_by: "system_architect"
-        feedback_strategy: "cookbook_quality_tracking"
-        feedback_channels: [
-          "cookbook_pattern_adherence_metrics",
-          "architectural_compliance_tracking",
-          "user_satisfaction_with_generated_workflows",
-          "workflow_execution_success_rates"
-        ]
-        quality_learning_integration: true
-        success_criteria: ["质量反馈机制设置完成", "学习循环建立"]
-        failure_action: "ESCALATE_TO_ARCHITECT"
-
-      # 新增：项目规范一致性最终验证
-      - constraint_task: "architect_led_project_standards_compliance_validation"
-        rule: "架构师主导对生成工作流进行项目规范一致性最终验证"
-        tool: "Task"  # 使用Task工具进行AI验证
-        responsible_agent: "system_architect"
-        validation_framework: "${ai_driven_project_standards_engine.core_use_cases_implementation.consistency_validation}"
-        validation_scope:
-          generated_workflow_compliance: "验证生成的工作流符合项目规范"
-          code_generation_compliance: "验证代码生成遵循项目标准"
-          template_adaptation_validation: "验证模板适配效果"
-          naming_convention_compliance: "验证命名规范一致性"
-        validation_inputs:
-          project_standards_profile: "${ANALYSIS_CACHE}/project-standards-profile.json"
-          generated_workflow: "${PLM_DIR}/generated/intelligent-workflow.yaml"
-        validation_outputs:
-          compliance_report: "${ANALYSIS_CACHE}/project-standards-compliance-report.md"
-          deviation_analysis: "${ANALYSIS_CACHE}/standards-deviation-analysis.json"
-          improvement_suggestions: "${ANALYSIS_CACHE}/standards-improvement-suggestions.md"
-        success_criteria: ["规范一致性验证通过", "偏差分析完成", "改进建议生成"]
-        failure_action: "REQUIRE_STANDARDS_ALIGNMENT"
-
-      # 系统架构师主导：生成模式学习和优化
-      - constraint_task: "architect_led_generation_pattern_learning"
-        rule: "架构师主导基于本次生成过程更新cookbook质量生成模式"
-        tool: "MultiEdit"  # 使用内置工具更新配置文件
-        responsible_agent: "system_architect"
-        learning_focus: "cookbook_quality_pattern_optimization"
-        update_targets: [
-          "cookbook_pattern_application_success_rates",
-          "architectural_decision_effectiveness",
-          "role_delegation_optimization_patterns",
-          "quality_injection_rule_refinement",
-          "project_standards_adaptation_effectiveness",  # 新增
-          "standards_compliance_patterns"  # 新增
-        ]
-        pattern_reinforcement: true
-        success_criteria: ["生成模式学习完成", "质量标准提升", "模式库更新"]
-        failure_action: "MANUAL_PATTERN_ANALYSIS_REQUIRED"
-
-    outputs: [
-      "${OUTPUT_DIR}/intelligent-workflow-{timestamp}.yaml",
-      "${OUTPUT_DIR}/comprehensive-usage-guide.md",
-      "${PLM_DIR}/learning/updated-preferences.json"
-    ]
-
-# 配置
-configuration:
-  constraint_driven:
-    enabled: true
-    strict_enforcement: false
-
-  execution:
-    intelligent_mode: true
-    adaptive_learning: true
-    context_aware: true
-
-  # 🤖 AI行为控制和执行路径严格约束
-  ai_behavior_control:
-    enabled: true
-    control_level: "STRICT_ADHERENCE"
-    deviation_tolerance: 0  # 零偏差容忍
-
-    # AI执行路径强制约束
-    execution_path_constraints:
-      mandatory_sequence_adherence:
-        description: "AI必须严格按照定义的阶段顺序执行"
-        enforcement: "BLOCKING"
-        violation_action: "ABORT_AND_RESTART_FROM_VALID_STAGE"
-
-      resource_validation_mandatory:
-        description: "AI必须在每个阶段验证资源可用性"
-        enforcement: "PRE_STAGE_BLOCKING"
-        violation_action: "FORCE_RESOURCE_VALIDATION"
-
-      constraint_rule_compliance_mandatory:
-        description: "AI必须遵守所有约束规则，不得绕过"
-        enforcement: "CONTINUOUS_MONITORING"
-        violation_action: "IMMEDIATE_ABORT"
-
-      template_reference_validation_mandatory:
-        description: "AI引用模板前必须验证存在性"
-        enforcement: "PRE_REFERENCE_BLOCKING"
-        violation_action: "REPLACE_WITH_VALIDATED_ALTERNATIVE"
-
-      tool_usage_validation_mandatory:
-        description: "AI使用工具前必须验证可用性"
-        enforcement: "PRE_TOOL_USAGE_BLOCKING"
-        violation_action: "USE_VERIFIED_ALTERNATIVE_TOOL"
-
-    # AI创造性限制 - 防止随意发挥
-    creativity_constraints:
-      prohibit_fictional_resources:
-        description: "禁止AI创造不存在的资源引用"
-        enforcement: "STRICT_BLOCKING"
-        detection_method: "RESOURCE_EXISTENCE_CHECK"
-        violation_action: "ABORT_WITH_RESOURCE_ERROR"
-
-      prohibit_undefined_tools:
-        description: "禁止AI使用未定义或未验证的工具"
-        enforcement: "STRICT_BLOCKING"
-        detection_method: "TOOL_REGISTRY_CHECK"
-        violation_action: "REPLACE_WITH_BUILTIN_TOOL"
-
-      prohibit_architecture_violations:
-        description: "禁止AI违反PocketFlow架构规范"
-        enforcement: "STRICT_BLOCKING"
-        detection_method: "ARCHITECTURE_COMPLIANCE_CHECK"
-        violation_action: "ENFORCE_ARCHITECTURE_PATTERN"
-
-      prohibit_invalid_role_assignments:
-        description: "禁止AI分配不存在或无效的角色"
-        enforcement: "STRICT_BLOCKING"
-        detection_method: "ROLE_DEFINITION_VALIDATION"
-        violation_action: "USE_DEFAULT_VALID_ROLES"
-
-    # AI决策边界控制
-    decision_boundary_control:
-      template_selection_boundary:
-        allowed_actions: ["SELECT_FROM_VERIFIED_TEMPLATES", "USE_EXISTING_TEMPLATES"]
-        prohibited_actions: ["CREATE_FICTIONAL_TEMPLATES", "ASSUME_TEMPLATE_EXISTS"]
-        boundary_enforcement: "STRICT"
-
-      tool_selection_boundary:
-        allowed_actions: ["USE_BUILTIN_TOOLS", "USE_VERIFIED_MCP_TOOLS"]
-        prohibited_actions: ["ASSUME_EXTERNAL_TOOLS", "CREATE_FICTIONAL_TOOLS"]
-        boundary_enforcement: "STRICT"
-
-      role_assignment_boundary:
-        allowed_actions: ["ASSIGN_DEFINED_ROLES", "USE_VALIDATED_COMBINATIONS"]
-        prohibited_actions: ["CREATE_FICTIONAL_ROLES", "INVALID_COMBINATIONS"]
-        boundary_enforcement: "STRICT"
-
-      architecture_design_boundary:
-        allowed_actions: ["APPLY_POCKETFLOW_PATTERNS", "USE_COOKBOOK_PATTERNS"]
-        prohibited_actions: ["VIOLATE_ARCHITECTURE_RULES", "ARBITRARY_DESIGN_CHOICES"]
-        boundary_enforcement: "STRICT"
-
-  # 工作流生成器特定配置
-  workflow_generator_features:
-    enabled: true
-    architecture_pattern_application: true    # 应用cookbook验证的架构模式
-    intelligent_component_extraction: true    # 智能组件提取
-    role_driven_design: true                  # 角色驱动设计
-    pocketflow_compliance_validation: true    # PocketFlow架构合规验证
-    project_standards_awareness: true         # 项目规范感知能力
-    ai_driven_standards_inference: true       # AI驱动规范推断
-
-  generation_configuration:
-    default_analysis_depth: 3
-    architecture_compliance_threshold: 0.9
-    auto_component_extraction: true
-
-  performance:
-    analysis_timeout: "5m"
-    generation_timeout: "3m"
-    parallel_analysis: true
-    cache_results: true
-
-  quality:
-    min_confidence_threshold: 0.7
-    require_validation: true
-    enable_optimization: true
-
-  # 🎯 通用输出质量控制框架 - 新增
-  universal_output_quality_framework:
-    adaptive_quality_control:
-      output_type_awareness: "根据输出类型调整质量标准"
-      audience_adaptation: "根据目标受众调整内容层次"
-      actionability_validation: "确保输出内容具备可执行性"
-      consistency_enforcement: "确保跨工作流的一致性标准"
-
-    quality_dimensions:
-      content_completeness: "内容完整性"
-      technical_accuracy: "技术准确性"
-      business_relevance: "业务相关性"
-      clarity_and_readability: "清晰度和可读性"
-      actionable_guidance: "可执行指导价值"
-
-    validation_mechanisms:
-      automated_quality_checks: true
-      stakeholder_validation: true
-      consistency_verification: true
-      improvement_suggestions: true
-
-  # 业务导向工作流质量控制 - 简化版
-  business_oriented_quality:
-    enabled: true
-    quality_dimensions:
-      business_language_usage:
-        weight: 0.3
-        min_threshold: 0.9
-        validation: "technical_jargon_detection"
-
-      stakeholder_focus:
-        weight: 0.25
-        min_threshold: 0.85
-        validation: "stakeholder_analysis_coverage"
-
-      business_value_clarity:
-        weight: 0.25
-        min_threshold: 0.8
-        validation: "roi_and_value_analysis_inclusion"
-
-      abstraction_appropriateness:
-        weight: 0.2
-        min_threshold: 0.85
-        validation: "abstraction_level_consistency"
-
-    # 质量保证规则（基于intelligent-requirement-analysis-workflow经验抽象）
-    quality_assurance_rules:
-      # 基础业务导向规则
-      - "业务导向工作流必须包含business_analyst角色"
-      - "问题生成必须设置avoid_technical_jargon标记"
-      - "所有问题类型必须定义abstraction_level"
-      - "必须包含stakeholder和business_value相关问题类型"
-      - "上下文配置优先使用business_context而非codebase_context"
-      - "技术术语必须替换为业务语言"
-      # 新增通用经验规则
-      - "复杂分析工作流必须包含multi_round_confirmation机制"
-      - "涉及代码修改的工作流必须包含business_entity_identification阶段"
-      - "需要投资决策的工作流必须包含business_value_and_roi_assessment"
-      - "生成PRD文档的工作流必须包含comprehensive_prd_guidance_framework"
-      - "业务实体相关问题必须使用chinese_terminology_mapping"
-      - "工作流输出必须具备实际指导价值和可执行性"
-
-    # 自动修复机制（增强）
-    auto_fix_enabled: true
-    fix_strategies:
-      technical_jargon_replacement: "自动替换技术术语为业务语言"
-      abstraction_level_correction: "自动设置合适的抽象层次"
-      business_context_injection: "自动注入业务导向上下文"
-      # 新增通用经验修复策略
-      multi_round_confirmation_injection: "自动注入多轮确认机制"
-      entity_aware_questioning_enhancement: "自动增强业务实体感知问题生成"
-      roi_assessment_integration: "自动集成ROI评估框架"
-      prd_guidance_framework_injection: "自动注入PRD指导框架"
-
-# 🧠 通用经验学习和模式识别引擎 - 简化版
-universal_experience_learning_engine:
-  # 通用成功模式抽象
-  universal_patterns:
-    interactive_validation_pattern:
-      description: "多轮交互确认机制"
-      applicability: "复杂分析和决策场景"
-
-    context_aware_analysis_pattern:
-      description: "上下文感知分析模式"
-      applicability: "需要深度理解业务和技术的场景"
-
-    value_driven_decision_pattern:
-      description: "价值驱动决策支撑"
-      applicability: "需要投资决策和优先级排序的场景"
-
-    actionable_output_pattern:
-      description: "可执行输出指导"
-      applicability: "需要直接指导实施的工作流"
-
-  # 通用学习机制
-  learning_mechanisms:
-    pattern_effectiveness_tracking: true
-    adaptive_pattern_selection: true
-    cross_workflow_learning: true
-    success_pattern_reinforcement: true
-
-  # 自适应应用规则
-  adaptive_application:
-    complexity_based_selection: true
-    context_driven_combination: true
-    outcome_based_optimization: true
-
-# 🤖 工作流托管需求判断引擎
-workflow_hosting_decision_engine:
-  # 判断标准定义
-  task_master_hosting_criteria:
-    # 需要Task-Master托管的指标
-    requires_hosting_if:
-      complex_multi_stage: "包含≥3个复杂执行阶段"
-      state_management_needed: "需要跨阶段状态保持和管理"
-      constraint_enforcement: "需要严格约束验证和执行控制"
-      task_decomposition: "需要智能任务分解和协调"
-      quality_gates: "包含质量门禁和验证流程"
-      file_operations: "需要代码生成、文件操作、构建执行"
-      dependency_management: "复杂的依赖关系管理"
-
-    # 不需要Task-Master托管的指标
-    no_hosting_if:
-      pure_analysis: "纯分析类工作流，无具体执行任务"
-      interactive_guidance: "主要是交互式引导和选择"
-      meta_workflow: "元工作流，用于生成其他工作流"
-      simple_reporting: "简单的报告生成和信息整理"
-      ai_internal_process: "AI编程工具内部处理流程"
-
-  # 智能判断算法
-  decision_algorithm:
-    scoring_method: "user_preference_priority + weighted_criteria_analysis"
-
-    # 优先级规则
-    priority_rules:
-      user_explicit_choice: 1.0       # 用户明确选择权重最高
-      automatic_analysis: 0.3         # 自动分析权重较低
-
-    # 用户选择处理
-    user_choice_handling:
-      interactive_guidance_selected:
-        hosting_decision: "no_hosting"
-        confidence: 0.95
-        override_analysis: true
-
-      automated_execution_selected:
-        hosting_decision: "hosting_required"
-        confidence: 0.95
-        override_analysis: true
-
-      hybrid_approach_selected:
-        hosting_decision: "conditional"
-        confidence: 0.7
-        requires_complexity_analysis: true
-
-    # 自动分析权重配置（仅在用户未明确选择或选择混合模式时使用）
-    criteria_weights:
-      execution_complexity: 0.25      # 执行复杂度
-      state_persistence: 0.20         # 状态持久化需求
-      constraint_requirements: 0.20   # 约束需求
-      tool_coordination: 0.15         # 工具协调需求
-      file_system_operations: 0.15    # 文件系统操作
-      user_interaction_type: 0.05     # 用户交互类型
-
-    # 判断阈值
-    hosting_threshold: 0.6            # ≥0.6 需要托管
-    no_hosting_threshold: 0.4         # ≤0.4 不需要托管
-    # 0.4-0.6之间需要人工确认
-
-  # 典型案例库
-  reference_cases:
-    needs_hosting:
-      - "TDD开发流水线"
-      - "CI/CD部署工作流"
-      - "代码质量检查和修复"
-      - "系统重构和测试"
-      - "多环境发布管理"
-
-    no_hosting:
-      - "需求分析引导"
-      - "工作流生成器"
-      - "文档模板生成"
-      - "配置向导"
-      - "决策支持分析"
-
-# 🎯 生成工作流的托管配置模板
-generated_workflow_templates:
-  # Task-Master托管模板
-  task_master_hosted_template:
-    task_master_config:
-      double_check:
-        enabled: true
-        verification_rounds: 2
-        auto_expand_threshold: 5
-
-      intelligent_features:
-        historical_context: true
-        research_enhancement: true
-        auto_optimization: true
-        complexity_analysis: true
-
-      execution_config:
-        mode: "task-master-driven"
-        converter_required: true
-        conversion_command: "python plugins/workflow-domain/converter.py -i {workflow_file} -o {output_file} --agents-mode --validate --pretty"
-
-  # 非托管模板
-  non_hosted_template:
-    execution_config:
-      mode: "ai-tool-native"
-      direct_execution: true
-      no_conversion_needed: true
-
-  # 通用业务工作流模板框架 - 简化版
-  universal_business_workflow_framework:
-    core_components:
-      business_analysis: "业务价值分析和干系人分析"
-      technical_feasibility: "技术可行性和实现复杂度评估"
-      roi_assessment: "投资回报和决策支持分析"
-      implementation_guidance: "实施策略和风险缓解规划"
-
-    adaptive_features:
-      multi_round_validation: true
-      terminology_clarification: true
-      context_aware_questioning: true
-      prd_level_output: true
-
-# 🎯 系统架构师驱动执行配置
-architect_driven_execution_config:
-  mode: "architect_driven_autonomous"      # 系统架构师驱动自主执行模式
-  primary_role: "system_architect"         # 主导角色：系统架构师
-  delegation_model: "expert_delegation_with_architecture_control"  # 委派模式：专家委派+架构控制
-
-  # 架构师权威和职责
-  architect_authority:
-    workflow_architecture_decisions: "工作流架构决策权"
-    quality_standard_enforcement: "质量标准执行权"
-    role_delegation_control: "角色委派控制权"
-    cookbook_pattern_application: "cookbook模式应用权"
-    final_approval_authority: "最终审批权威"
-
-  # 专家委派执行机制
-  expert_delegation_mechanism:
-    delegation_principles:
-      - "基于专业能力的任务委派"
-      - "保持架构师的决策控制权"
-      - "确保委派任务与整体架构一致"
-      - "建立清晰的上报和升级机制"
-
-    delegation_patterns:
-      technical_validation: "委派给tech_lead进行技术验证"
-      requirement_analysis: "委派给business_analyst进行需求分析"
-      quality_assurance: "委派给quality_expert进行质量保证"
-      implementation_guidance: "委派给senior_engineer进行实现指导"
-
-    escalation_triggers:
-      - "委派任务超出角色能力范围"
-      - "出现架构决策冲突"
-      - "质量标准不达标"
-      - "技术实现存在重大风险"
-
-  # 用户交互简化配置
-  user_interaction_optimization:
-    single_point_of_contact: "system_architect"  # 单一联系点
-    minimal_intervention_points: [
-      "requirement_confirmation",           # 需求确认
-      "architecture_decision_validation",  # 架构决策验证
-      "final_review"                      # 最终审核
-    ]
-    autonomous_processing_areas: [
-      "technical_analysis",               # 技术分析
-      "capability_assessment",           # 能力评估
-      "role_selection",                  # 角色选择
-      "quality_injection",               # 质量注入
-      "workflow_synthesis"               # 工作流合成
-    ]
-
-  # cookbook质量保证集成
-  cookbook_quality_integration:
-    automatic_pattern_detection: true      # 自动模式检测
-    quality_injection_enforcement: true    # 质量注入强制执行
-    architectural_compliance_validation: true  # 架构合规验证
-    cookbook_similarity_tracking: true     # cookbook相似度跟踪
-
-  # 架构师主导的工作流特性
-  architect_led_workflow_characteristics:
-    architecture_first_approach: "架构优先方法"
-    quality_by_design: "设计阶段质量保证"
-    expert_knowledge_integration: "专家知识集成"
-    systematic_delegation: "系统化委派"
-    continuous_quality_validation: "持续质量验证"
-
-# 🎭 角色委派机制详细配置（重构版）
-architect_driven_role_delegation:
-  # 系统架构师主导的工作流体验
-  architect_led_workflow_experience:
-    workflow_initiation: "用户提供工作流生成需求"
-    architect_requirement_analysis: "架构师主导需求理解和技术意图解析"
-    expert_capability_delegation: "架构师委派专家进行专业分析"
-    architecture_decision_making: "架构师做出架构和质量决策"
-    workflow_synthesis_oversight: "架构师监督工作流合成过程"
-    cookbook_quality_validation: "架构师验证cookbook级别质量"
-    final_deliverable_approval: "架构师审批最终交付物"
-
-  # 系统架构师协调的专家团队
-  architect_coordinated_expert_team:
-    system_architect:
-      primary_responsibilities: [
-        "工作流架构设计",
-        "质量标准制定和验证",
-        "专家任务委派和协调",
-        "技术决策制定",
-        "cookbook模式应用"
-      ]
-      execution_mode: "primary_decision_maker"
-      authority_level: "highest"
-
-    tech_lead:
-      delegated_responsibilities: [
-        "技术可行性验证",
-        "代码库架构分析",
-        "工具集成方案设计",
-        "技术实现指导"
-      ]
-      execution_mode: "delegated_specialist"
-      reporting_to: "system_architect"
-
-    business_analyst:
-      delegated_responsibilities: [
-        "业务需求细化分析",
-        "行业最佳实践匹配",
-        "角色选择建议",
-        "业务价值评估"
-      ]
-      execution_mode: "delegated_specialist"
-      reporting_to: "system_architect"
-
-    quality_expert:
-      delegated_responsibilities: [
-        "质量标准验证",
-        "cookbook模式合规检查",
-        "质量反馈机制设计",
-        "质量门禁设置"
-      ]
-      execution_mode: "delegated_specialist"
-      reporting_to: "system_architect"
-
-    senior_engineer:
-      delegated_responsibilities: [
-        "插件域扩展实现",
-        "组件生成和集成",
-        "技术实现细节设计",
-        "代码结构优化"
-      ]
-      execution_mode: "delegated_specialist"
-      reporting_to: "system_architect"
-
-  # 架构师主导的质量保证流程
-  architect_led_quality_assurance:
-    quality_oversight_at_each_stage: "每个阶段的质量监督"
-    cookbook_pattern_application_validation: "cookbook模式应用验证"
-    expert_deliverable_review: "专家交付物审核"
-    final_architecture_compliance_check: "最终架构合规检查"
-    quality_score_validation: "质量评分验证"
-
-# 🎯 最终交付成果（架构师审批版）
-architect_approved_deliverables:
-  primary_deliverable:
-    document_type: "cookbook级别的工作流文档"
-    generation_mode: "architect_supervised_expert_synthesis"  # 架构师监督的专家合成
-    architectural_endorsement: "system_architect_approved"     # 系统架构师认可
-    quality_validation: "cookbook_pattern_validated"           # cookbook模式验证
-
-  comprehensive_workflow_package:
-    architectural_design_document: "工作流架构设计文档（架构师制定）"
-    role_delegation_specification: "角色委派规范（架构师设计）"
-    quality_assurance_framework: "质量保证框架（质量专家实现，架构师审批）"
-    technical_implementation_guide: "技术实现指南（技术负责人提供，架构师确认）"
-    cookbook_compliance_report: "cookbook合规性报告（架构师验证）"
-
-  architecture_artifacts:
-    workflow_architecture_blueprint: "工作流架构蓝图"
-    component_dependency_matrix: "组件依赖关系矩阵"
-    quality_gate_configuration: "质量门禁配置"
-    expert_collaboration_framework: "专家协作框架"
-    continuous_improvement_mechanism: "持续改进机制"
-
-  validation_records:
-    architect_decision_log: "架构师决策记录"
-    expert_delegation_history: "专家委派历史"
-    quality_validation_results: "质量验证结果"
-    cookbook_similarity_analysis: "cookbook相似度分析"
-    architecture_compliance_certification: "架构合规认证"
-
-# 🚨 AI执行严格性保证总结
-ai_execution_strictness_guarantee:
-  strictness_level: "MAXIMUM_ENFORCEMENT"
-  deviation_tolerance: "ZERO_TOLERANCE"
-
-  # 强制执行保证机制
-  enforcement_guarantees:
-    resource_validation_guarantee:
-      description: "保证AI必须验证所有资源的实际存在性"
-      mechanism: "PRE_EXECUTION_BLOCKING_VALIDATION"
-      failure_handling: "IMMEDIATE_ABORT"
-
-    template_reference_guarantee:
-      description: "保证AI只能引用经过验证的模板文件"
-      mechanism: "STRICT_TEMPLATE_REGISTRY_CHECK"
-      failure_handling: "REPLACE_OR_ABORT"
-
-    tool_usage_guarantee:
-      description: "保证AI只能使用已验证可用的工具"
-      mechanism: "TOOL_AVAILABILITY_MATRIX_ENFORCEMENT"
-      failure_handling: "USE_BUILTIN_ALTERNATIVE"
-
-    architecture_compliance_guarantee:
-      description: "保证AI严格遵循PocketFlow架构规范"
-      mechanism: "CONTINUOUS_ARCHITECTURE_VALIDATION"
-      failure_handling: "ENFORCE_COMPLIANCE_OR_ABORT"
-
-    constraint_adherence_guarantee:
-      description: "保证AI无法绕过任何约束规则"
-      mechanism: "MULTI_LEVEL_CONSTRAINT_MONITORING"
-      failure_handling: "IMMEDIATE_VIOLATION_ABORT"
-
-  # 防随意发挥的关键控制点
-  anti_improvisation_controls:
-    - "禁止创造不存在的资源引用"
-    - "禁止假设工具和模板的可用性"
-    - "禁止违反架构和角色分配规范"
-    - "禁止绕过验证和约束检查"
-    - "强制使用实际扫描和验证的结果"
-
-  # 执行质量保证
-  quality_assurance_mechanisms:
-    validation_checkpoints: "多级验证检查点"
-    blocking_enforcement: "阻断式违规处理"
-    resource_registry_enforcement: "资源注册表强制执行"
-    architecture_pattern_enforcement: "架构模式强制应用"
-    constraint_framework_integration: "约束框架深度集成"
-
-  # 违规检测和处理
-  violation_detection_and_handling:
-    real_time_monitoring: "实时监控AI执行行为"
-    violation_detection_algorithms: "多维度违规检测算法"
-    immediate_response_mechanisms: "即时响应和阻断机制"
-    comprehensive_error_reporting: "全面的错误报告和分析"
-    recovery_strategies: "违规后的恢复策略"
+      - id: create_directory
+        description: "创建项目目录"
+        tools: ["Bash"]
+        command: "mkdir -p {app_name}/utils"
+
+      - id: install_dependencies
+        description: "安装依赖"
+        tools: ["Bash"]
+        command: "pip install -r {app_name}/requirements.txt"
+        optional: true
+
+      - id: run_test
+        description: "运行测试"
+        tools: ["Bash"]
+        command: "cd {app_name} && python main.py"
+        optional: true
+
+# ========================================
+# 约束配置
+# ========================================
+constraints:
+  # 强制约束
+  prohibit:
+    - "引用不存在的文件路径"
+    - "违反 PocketFlow prep-exec-post 模型"
+    - "在 exec 中访问 shared"
+    - "过度工程化"
+
+  # 必需要求
+  require:
+    - "扫描 cookbook/ 目录"
+    - "生成完整项目结构(包括 README)"
+    - "验证代码质量"
+    - "包含详细注释和文档"
+
+  # 允许操作
+  allow:
+    - "灵活的目录结构"
+    - "选择 LLM 提供商"
+    - "自定义工具函数"
+
+# ========================================
+# 质量标准
+# ========================================
+quality_standards:
+  code:
+    - "遵循 PocketFlow 架构规范"
+    - "代码风格一致"
+    - "完整的 docstring"
+    - "包含测试代码"
+
+  documentation:
+    - "README 完整清晰"
+    - "架构图使用 Mermaid"
+    - "包含使用示例"
+
+  functionality:
+    - "生成的代码可直接运行"
+    - "符合用户需求"
+    - "继承 Cookbook 最佳实践"
+
+# ========================================
+# 输出规范
+# ========================================
+output_specification:
+  directory_structure: |
+    {app_name}/
+    ├── main.py
+    ├── nodes.py
+    ├── utils/
+    │   ├── __init__.py
+    │   └── call_llm.py
+    ├── requirements.txt
+    └── README.md
+
+  files_to_generate:
+    - "main.py"
+    - "nodes.py"
+    - "utils/__init__.py"
+    - "utils/call_llm.py"
+    - "requirements.txt"
+    - "README.md"
+    - "flow.py (可选,复杂流程时)"
+
+# ========================================
+# 示例模板
+# ========================================
+templates:
+  node_template: |
+    class {NodeName}(Node):
+        """
+        {NodeDescription}
+        """
+        def prep(self, shared):
+            """从 shared 读取数据并预处理"""
+            return shared.get("{input_key}")
+
+        def exec(self, prep_res):
+            """执行核心逻辑,不访问 shared"""
+            # TODO: 实现逻辑
+            return result
+
+        def post(self, shared, prep_res, exec_res):
+            """将结果写回 shared 并决定下一步"""
+            shared["{output_key}"] = exec_res
+            return "default"
+
+  main_template: |
+    #!/usr/bin/env python3
+    """
+    {AppName} - {AppDescription}
+    """
+    from pocketflow import Node, Flow
+    from nodes import *
+
+    def main():
+        # 初始化 shared store
+        shared = {
+            # TODO: 添加初始数据
+        }
+
+        # 构建 Flow
+        flow = Flow(start=node1)
+        # TODO: 添加节点连接
+
+        # 运行
+        flow.run(shared)
+
+        # 输出结果
+        print(shared.get("result"))
+
+    if __name__ == "__main__":
+        main()
+
+# ========================================
+# Cookbook 匹配规则
+# ========================================
+cookbook_matching:
+  keywords_to_examples:
+    agent: ["pocketflow-agent", "pocketflow-supervisor"]
+    workflow: ["pocketflow-workflow"]
+    rag: ["pocketflow-rag"]
+    batch: ["pocketflow-batch", "pocketflow-batch-node"]
+    async: ["pocketflow-async-basic"]
+    search: ["pocketflow-agent", "pocketflow-tool-search"]
+    multi_agent: ["pocketflow-multi-agent", "pocketflow-a2a"]
+    map_reduce: ["pocketflow-map-reduce"]
+    chat: ["pocketflow-chat", "pocketflow-chat-memory"]
+    tool: ["pocketflow-tool-*"]
+
+# ========================================
+# 执行提示
+# ========================================
+execution_hints:
+  - "严格按照 SKILL.md 中的九步执行"
+  - "必须扫描 cookbook/ 目录作为参考"
+  - "生成的代码必须可直接运行"
+  - "包含完整的 README 和注释"
+  - "遵循 PocketFlow 架构规范"
+  - "不依赖不存在的外部文件"
